@@ -15,13 +15,11 @@ body, html {
 .bgimg {
   background-position: center +90px;
   background-size: cover;
-  background-image: url("images/jokic_westbrook.avif");
+  background-image: url("images/jokic_westbrook.png");
   min-height: 100%;
 }
 
-.menu {
-  display: none;
-}
+
 </style>
 </head>
 <body>
@@ -51,7 +49,7 @@ body, html {
 </div>
 
 <!-- Header with image -->
-<header class="bgimg w3-display-container w3-grayscale-min" id="home">
+<header class="bgimg w3-display-container w3-grayscale-min">
   <div class="w3-display-bottomleft w3-center w3-padding-large w3-hide-small">
     <a href="https://www.nba.com/nuggets/photos" class="w3-tag">Photo Credits to the NBA</a>
   </div>
@@ -68,8 +66,19 @@ body, html {
 <div class="w3-container" id="introduction">
   <div class="w3-content" style="max-width:700px">
     <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Introduction</span></h5>
-    <p>Paragraph1</p>
-    <p>Paragraph2</p>
+    <p>The National Basketball Association is the second highest revenue sports leauge in the world. Moreover, the league has players representing a record 43 different countries. In fact, during the past five years, the athletes voted to win the most valuable player (MVP) represent Serbia, Cameroon, and Greece, respectively. With global reach and a diverse player base, the NBA produces entertainment that spans continents. Because analysts meticulously record player and game statistics, game data is ripe for hobbiest data scientists to explore the patterns of their favorite players and teams. Analyzing this data may yield understanding to many facets of basketball, such as why some teams have greater success than others, or what types of plays a player can make to be most impactful. This analysis will start off by looking at the general life cycle of an NBA athelete and uncover league averages in contributions such as points, assists, and rebounds.</p>
+    <p>The analysis herein will focus mainly on what stats the most reputable athletes generate. Particularly, this analysis will look at two former MVPs, Nikola Jokic and Russell Westbrook, that currently play on the same team: the Denver Nuggets. Aged 30 and 36 respectively, the two athletes are at different points in their career trajectory, with the latter far beyond the average age of retirement for the NBA. However, both athletes have shown great success throughout their entire careers and we will examine what qualities of their play have lead to such great achievement. However, achievement was never gauranteed. And many fans, particularly for Russell Westbrook, were quick to decry his slumping contributions in during the later half of his career. Were these criticisms justified? Or were they frustrated pieces of gossip garnered on social media by fans of a losing team? This analysis will look to ask: </p>
+    <p>1-3) How can we quantify the average NBA player? How many points do they score or assists do they make? How many years do they play?</p>
+    <p>4-5) Are there performance indicators that suggest when a player will retire? What indicates a long career?</p>
+    <p>6) How great are Jokic and Westbrook to the averages?</p>
+    <p>7) In what ways are these two athletes the greatest and why did they deserve MVP nomination?
+    <p>8) Have they elevated each others game? How is Russ in Denver?</p>
+    <p>9) What is the news sentiment around each player? Do they differ in positivity?</p>
+    <p>10) and lastly... is there any possible way to predict the outcome of a game?</p>
+    
+    <p>The data will be gathered from a variety of sources, primarily, the NBA API (for career statistics and game records) and the News API (to evaluate public sentiment) we've covered in class.</p>
+    <p>Cleaned data in comma-separated formats can be found compressed in a zip file <a href="./data/cleaned_data.zip" download>here</a>.</p>
+    <p>The notebook used to process the data can be gotten <a href="./notebooks/gather_data.ipynb" download>here</a>.</p>
     
   </div>
 </div>
@@ -78,7 +87,39 @@ body, html {
 <div class="w3-container" id="data">
   <div class="w3-content" style="max-width:700px">
     <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Data Preparation and Cleaning</span></h5>
-    <p>Paragraph1</p>
+    <div class="w3-center">
+      <img src="./images/jk_pts_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+    <div class="w3-center">
+      <img src="./images/jk_pts_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+    <div class="w3-center">
+      <img src="./images/jk_ast_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+    <div class="w3-center">
+      <img src="./images/jk_reb_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+    <div class="w3-center">
+      <img src="./images/wb_points_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+    <div class="w3-center">
+      <img src="./images/wb_ast_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+    <div class="w3-center">
+      <img src="./images/wb_reb_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+    <div class="w3-center">
+      <img src="./images/totalPointsPerYears.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
+    </div>
+    <p></p>
+
     <p>Paragraph2</p>
 
   </div>
