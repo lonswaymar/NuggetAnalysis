@@ -76,9 +76,7 @@ body, html {
     <p>9) What is the news sentiment around each player? Do they differ in positivity?</p>
     <p>10) and lastly... is there any possible way to predict the outcome of a game?</p>
     
-    <p>The data will be gathered from a variety of sources, primarily, the NBA API (for career statistics and game records) and the News API (to evaluate public sentiment) we've covered in class.</p>
-    <p>Cleaned data in comma-separated formats can be found compressed in a zip file <a href="./data/cleaned_data.zip" download>here</a>.</p>
-    <p>The notebook used to process the data can be gotten <a href="./notebooks/gather_data.ipynb" download>here</a>.</p>
+    
     
   </div>
 </div>
@@ -87,9 +85,19 @@ body, html {
 <div class="w3-container" id="data">
   <div class="w3-content" style="max-width:700px">
     <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Data Preparation and Cleaning</span></h5>
-    <div class="w3-center">
-      <img src="./images/jk_pts_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
-    </div>
+    
+    <p>To begin understanding NBA data, it is important to look at the three main statistics that our two famed athletes are most famous for: points, rebounds and assists. In the following figures, you'll see these statistics abbreviated to "PTS", "AST", and "REB", respectively.</p>
+    <ul>
+        <li> Points occur when a player throws the ball into a basketball hoop. They can be scored in increments of one, two, or three.
+        <li> Assits occur when a player passes the ball to another player, and the secondary player immediately moves to score. The assist is awarded to the first player.
+        <li> Rebounds occur when a player grabs a ball that has just been thrown towards a basket and misses. They occur offensively, when a player catches the ball off of the opponents goal, and defensively, when the ball is caught rebounding off the player's own goal.
+    </ul>
+    
+    <p>
+        An athelete is said to acheive a "triple-double" when they've scored more than 10 of each of the three stats (i.e, PTS, AST, REB) in a given game. 
+        Triple doubles are a proxy casual fans use to measure an athlete's impact on a game. 
+        They've become a marker of dominance and greatness.
+    </p>
     <p></p>
     <div class="w3-center">
       <img src="./images/jk_pts_per_minute.png" alt="Points Nikola Jokic has made per minute throughout his NBA seasons." class="w3-image" style="width:100%; max-width:600px;">
@@ -120,7 +128,10 @@ body, html {
     </div>
     <p></p>
 
-    <p>Paragraph2</p>
+    <div class="w3-panel w3-leftbar w3-light-grey">
+        <p><i>Cleaned data in comma-separated formats can be found compressed in a zip file <a href="./data/cleaned_data.zip" download>here</a>.</i></p>
+        <p><i>The notebook used to process the data can be gotten <a href="./notebooks/gather_data.ipynb" download>here</a>.</i></p>
+    </div>
 
   </div>
 </div>
