@@ -180,7 +180,7 @@ body, html {
   </div>
 </div>
 
-<!-- Model 3 Container -->
+<!-- Model 3 Container: CLUSTERING -->
 <div class="w3-container" id="model3">
   <div class="w3-content" style="max-width:700px">
     <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Clustering</span></h5>
@@ -200,6 +200,22 @@ body, html {
       <img src="./images/minutes_played_all_players.png" class="w3-image" style="width:100%; max-width:1200px;">
     </div>
     
+    <p>
+    Note that curve is falls exponentially as minutes increase. This implies that it becomes harder and harder for an athlete to continue their career as they age. Thus, there are still players with great longevity even if they
+    haven't cracked the top 10 in assists or points. 
+    </p>
+    <p>
+    Below is a labeled scatter plot of career assists versus career points for the two types of athletes - leaders and non-leaders. 
+    </p>
+    
+    <div class="w3-center">
+      <img src="images/pts_asts_scatter.png" class="w3-image" style="width:100%; max-width:1200px;">
+    </div>
+    <p>
+    Note that it seems like there is a flaw in the data. The top most blue scatter point seems to among both the top 10 assists and points. Thus, it is perhaps true that the all time leaders endpoint that grabbed the leaders list for each stat
+    is not as recently updated as the career player statistics endpoint that I used to grab the career stats. Besides this point, however, we can clearly see that the leaders are the top performers in points and assists by viewing the orange points 
+    as being further along the x and y axes for their respective stats. 
+    </p>
     
   </div>
 </div>
