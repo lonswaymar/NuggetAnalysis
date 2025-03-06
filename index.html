@@ -189,9 +189,18 @@ body, html {
     To assess if Jokić and Westbrook should be among the greatest NBA players of all time, I decided to grab the data of the all time leaders in scoring and assists. 
     I then grabbed the data of all active players of the NBA and removed from the data any player that was also in the stat leaders category. LeBron James and Russell Westbrook are notable for being in both groups.
     Next, I used only the top 20 players in the currently active (but not leading) dataset by minutes. This was done to ensure that the active players with the most minutes would
-    be compared to the stat leaders, who were players with many years of longevity. Below, I've plotted a figure of points versus assists for both groups of athletes. K-means was then applied to determine if there were 
+    be compared to the stat leaders, who were players with many years of longevity. Below, I've plotted a figure of assists versus points for both groups of athletes. K-means was then applied to determine if there were 
     clusters that separate the two populations. 
+    
+    Because the leaders population only contains data on the top 10 athletes in each statistic, I've chosen to only use the players in the top 95 percentile of minutes played in the leauge for comparison.
+    A histogram shows the total minutes played in the career of all currently active NBA players NOT in the leader categories.
     </p>
+    
+    <div class="w3-center">
+      <img src="./images/minutes_played_all_players.png" class="w3-image" style="width:100%; max-width:1200px;">
+    </div>
+    
+    
   </div>
 </div>
 
