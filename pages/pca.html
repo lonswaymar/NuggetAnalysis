@@ -167,13 +167,36 @@
                     <img src="../images/module2_images/eigenvalues.png" class="w3-image" style="width:50%; max-width:1000px;">
                 </div>
                 
-
-   
+                <p>The main takeaway so far from the principal componenet analysis is that bench players are associated with the only cluster and that 
+                starters represent a fan of data moving outward with greater variance from the cluster. Given the features used in the decomposition, we can makes
+                sense of the greater starter variance by their nature of simply playing more minutes. If a player has been given more minutes, they're likely to rack
+                up more statistics in every other category. Thus, many of their accumulated stats track directly with minutes. Given more opportunity to play, starters
+                <em>do more things</em> on the basketball court than bench players. To account for this, I've applied PCA once more; this time, however, I've divided many
+                of the features in the cleaned dataset by the <code>MIN</code> column from the original dataframe. The results are shown next:
+                </p>
+                
+                <div class="w3-center">
+                    <img src="../images/module2_images/pca_min_scaled.png" class="w3-image" style="width:90%; max-width:1000px;">
+                </div>
+                
+                <p>
+                Notice how the two populations greatly overlap! <strong>If we accept my definition of <code>STARTER</code> to be appropriate</strong>,
+                then we can conclude that there are many athletes in each population that could truly belong to other based on their per minute accumulation of
+                the stats used in the analysis. 
+                </p>
+                <p>One real-world application of this analysis would be for a coach and team management to assess where their starters belong in this distribution.
+                Perhaps, if their starter is in the middle of the distribution, they might have bench players that could perform at the same rate if their endurance to player extended minutes
+                scaled with minutes played. This would allow starters to rest more throughout the season, expose more players to longer play times boosting their careers, and help
+                teams stay below salary caps by playing lesser known players that still have deep talent and potential.
+                </p>
 
                 <!-- Download Section -->
                 <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
-                    <p><i>You can download the full PCA-prepared dataset <a href="../data/pca_cleaned_data.csv" download>here</a>.</i></p>
-                    <p><i>The notebook used to generate the PCA and figures can be found <a href="../notebooks/pca_analysis.ipynb" download>here</a>.</i></p>
+                    <ul>
+                        <li>The raw data from <code>leaguedashplayerstats</code> for the 2023-2024 season can be downloaded <a href="../data/module2_data/leaguedashplayerstats.csv" download>here</a>.</li>
+                        <li>And the cleaned version used for PCA that only uses the selected features in the table: <a href="../data/module2_data/pca_cleaned_data.csv" download>here</a>.</li>
+                        <li>The notebook used to generate the PCA and figures can be found <a href="../notebooks/gather_data_pca.ipynb" download>here</a>.</li>
+                    </ul>
                 </div>
 
             </div>

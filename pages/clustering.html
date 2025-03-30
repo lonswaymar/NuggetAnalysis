@@ -1,80 +1,147 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Clustering - Nugget Analysis</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
-  <style>
-    body, html {
-      height: 100%;
-      font-family: "Georgia", sans-serif;
-    }
-  </style>
+    <title>Clustering - Nugget Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <style>
+        body, html {
+          height: 100%;
+          font-family: "Georgia", sans-serif;
+        }
+    </style>
 </head>
 <body>
 
 <!-- Navbar -->
 <div class="w3-top">
-  <div class="w3-row w3-padding w3-black">
-    <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
-    <div class="w3-col s2"><a href="data.html" class="w3-button w3-block w3-black">Data Prep</a></div>
-    <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
-    <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
-    <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
-    <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
-  </div>
+    <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
+        <div class="w3-col s2"><a href="data.html" class="w3-button w3-block w3-black">Data Prep</a></div>
+        <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
+        <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
+        <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
+        <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
+    </div>
 </div>
 
 <!-- Page Content -->
 <div class="w3-sand w3-grayscale w3-large">
-  <div class="w3-container" id="model3">
-    <div class="w3-content" style="max-width:700px">
-      <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Clustering</span></h5>
+    <div class="w3-container" id="model3">
+        <div class="w3-content" style="max-width:700px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Clustering</span></h5>
+            
+            <strong>KMeans Clustering</strong>
+            <p>To assess if Jokić and Westbrook should be among the greatest NBA players of all time, I gathered data on all-time leaders in scoring and assists, then compared them to the top 20 currently active players (by minutes played) who are not on the leaderboard.
+            </p>
+      
+            <p>This comparison helps determine whether a statistical difference exists between long-tenured high performers and current high-usage players. A histogram below shows the total career minutes played by all active players not on the leaderboards.
+            </p>
+        
+            <div class="w3-center">
+                <img src="../images/module2_images/minutes_played_all_players.png" class="w3-image" style="width:70%;">
+            </div>
 
-      <p>
-        To assess if Jokić and Westbrook should be among the greatest NBA players of all time, I gathered data on all-time leaders in scoring and assists, then compared them to the top 20 currently active players (by minutes played) who are not on the leaderboard.
-      </p>
-      <p>
-        This comparison helps determine whether a statistical difference exists between long-tenured high performers and current high-usage players. A histogram below shows the total career minutes played by all active players not on the leaderboards.
-      </p>
+            <p>Note the exponential drop-off in minutes — it's increasingly difficult to sustain a long NBA career. Yet, there are still many productive players who haven’t cracked the top 10 in points or assists.
+            </p>
+
+            <p>Below is a labeled scatter plot of total career assists versus total career points for both groups of athletes.
+            </p>
+
+            <div class="w3-center">
+                <img src="../images/module1_images/pts_asts_scatter.png" class="w3-image" style="width:70%;">
+            </div>
+
+            <p>The orange dots represent leaderboard players, while blue dots represent high-minute active players. The visible separation suggests statistical differences — but does KMeans clustering agree?
+            </p>
+
+            <p>KMeans clustering works by initializing <i>k</i> centroids, assigning each point to the nearest one, then updating the centroids until convergence. Below are the results for this dataset:
+            </p>
+
+            <div class="w3-center">
+                <img src="../images/module2_images/kmeans.png" class="w3-image" style="width:70%;">
+            </div>
+
+            <p>Interestingly, the KMeans algorithm does not cleanly separate leaderboard players from others. This suggests that longevity (measured by minutes) — not intrinsic ability — is the main divider. Given enough time, high-minute players are likely to join the leaderboard ranks.
+            </p>
+            
+            <strong>Hierarchical Clustering</strong>
+            <p>For this portion of the clustering analysis, I used data from the <code>leaguedashplayerstats</code> endpoint from the NBA API. This dataset, also used in the PCA tab, represents each active NBA players' stats over the 2023-2024 NBA season. 
+            Please visit the PCA tab to view the original dataset.
+            </p>
+            
+            <p>However, for the hierarchical clustering, I only used a small portion of the dataset. Like the table cleaned for the PCA analysis, this only includes
+            the quantitative variables. Ordinal and qualitative have been removed. Then, I sorted the remaining data by the <code>PTS</code> column and chose only the top six entries in the dataframe.
+            This generated six records of the top scoring individuals in the NBA over the 2023-2024 season. The data is shown below.
+            </p>
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 400px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>FGM</th><th>FGA</th><th>FG_PCT</th><th>FG3M</th><th>FG3A</th><th>FG3_PCT</th>
+                            <th>FTM</th><th>FTA</th><th>FT_PCT</th><th>OREB</th><th>DREB</th><th>REB</th>
+                            <th>AST</th><th>TOV</th><th>STL</th><th>BLK</th><th>BLKA</th><th>PF</th><th>PFD</th>
+                            <th>PTS</th><th>PLUS_MINUS</th><th>NAME</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>804</td><td>1652</td><td>0.487</td><td>284</td><td>744</td><td>0.382</td><td>478</td><td>608</td><td>0.786</td><td>59</td><td>588</td><td>647</td><td>686</td><td>282</td><td>99</td><td>38</td><td>50</td><td>149</td><td>477</td><td>2370</td><td>319</td><td>Luka Dončić</td></tr>
+                        <tr><td>796</td><td>1487</td><td>0.535</td><td>95</td><td>269</td><td>0.353</td><td>567</td><td>649</td><td>0.874</td><td>65</td><td>350</td><td>415</td><td>465</td><td>162</td><td>150</td><td>67</td><td>77</td><td>184</td><td>480</td><td>2254</td><td>613</td><td>Shai Gilgeous-Alexander</td></tr>
+                        <tr><td>837</td><td>1369</td><td>0.611</td><td>34</td><td>124</td><td>0.274</td><td>514</td><td>782</td><td>0.657</td><td>196</td><td>645</td><td>841</td><td>476</td><td>250</td><td>87</td><td>79</td><td>90</td><td>210</td><td>604</td><td>2222</td><td>339</td><td>Giannis Antetokounmpo</td></tr>
+                        <tr><td>790</td><td>1648</td><td>0.479</td><td>211</td><td>526</td><td>0.401</td><td>421</td><td>497</td><td>0.847</td><td>43</td><td>235</td><td>278</td><td>519</td><td>186</td><td>70</td><td>13</td><td>64</td><td>144</td><td>480</td><td>2212</td><td>512</td><td>Jalen Brunson</td></tr>
+                        <tr><td>822</td><td>1411</td><td>0.583</td><td>83</td><td>231</td><td>0.359</td><td>358</td><td>438</td><td>0.817</td><td>223</td><td>753</td><td>976</td><td>708</td><td>237</td><td>108</td><td>68</td><td>68</td><td>194</td><td>426</td><td>2085</td><td>682</td><td>Nikola Jokić</td></tr>
+                        <tr><td>718</td><td>1558</td><td>0.461</td><td>190</td><td>532</td><td>0.357</td><td>423</td><td>506</td><td>0.836</td><td>52</td><td>378</td><td>430</td><td>405</td><td>241</td><td>101</td><td>42</td><td>56</td><td>141</td><td>336</td><td>2049</td><td>432</td><td>Anthony Edwards</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>Note that the only acception to this dataset compared to the other clustering datasets is that I included the name of the athlete so we could see which individuals were clustered together.
+            In the following DBSCAN clustering, the names were excluded. 
+            </p>
+            
+            <p>To cluster the data, I used the <code>scipy.cluster.hierarchy</code> library. In creating the dendrogram, I used the <em>ward</em> method. This method of hierarchical clustering iteratively
+            goes through each of the records and asseses which subsequent record is closest in Euclidean distance. When the subsequent record is chosen, the pairs are clustered together.
+            After a first pass through the data, paired records are treated as a single cluster. Clusters or unpaired records are then merged with whatever unit adds the least variance to the overall grouping. 
+            The dendrogram below illustrates these groupings. Note that the lowest level forks on the dendrogram represent the records with the smallest Euclidean distance at the difference between the heights of a given fork and that of the next level
+            equal the variance added to the cluster by the subsequent grouping. The results of the <em>ward</em> algorithm are illustrated in the dendrogram below. 
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module2_images/hierarchical_clustering.png" class="w3-image" style="width:70%;">
+            </div>            
+            
+            <p>Clustered on the left are three dominant athletes — Luka Dončić, Anthony Edwards, and Jalen Brunson — all of whom play as <em>guards</em> in the NBA. 
+            This position typically involves skilled ball handling, playmaking, and scoring potential. 
+            Guards are responsible for setting the pace on offense and usually defend the perimeter against outside shooting threats.
+            </p>
+
+            <p>The other major cluster includes Nikola Jokić and Giannis Antetokounmpo, two athletes who have recently won the NBA’s Most Valuable Player (MVP) award. 
+            Both serve as versatile frontcourt players who operate close to the basket on both ends of the court — defending the rim and scoring efficiently near the hoop. 
+            Shai Gilgeous-Alexander, a prospective MVP candidate for the 2024–2025 season, joins them at the next merged fork. 
+            While he also plays as a guard, Shai, Jokić, and Antetokounmpo may be grouped together due to their overwhelming importance to their respective teams. 
+            Though all have had strong teammates, these three are clearly the top offensive option for their squads. 
+            That centrality may boost their individual stats and account for their similarity in this clustering.
+            </p>
+
+            
+            <strong>DBSCAN</strong>
+            <p>
+            </p>
+            
+            <!-- Download Section -->
+            <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
+                <ul>
+                    <li>The raw data from <code>leaguedashplayerstats</code> for the 2023-2024 season can be downloaded <a href="../data/module2_data/leaguedashplayerstats.csv" download>here</a>.</li>
+                    <li>The trimmed and cleaned version for the hierarchical clustering can be downloaded <a href="../data/module2_data/top_6_scorers.csv" download>here</a>.</li>
+                    <li>And the cleaned version used for DBSCAN via PCA that only uses the selected features in the table: <a href="../data/module2_data/pca_cleaned_data.csv" download>here</a>.</li>
+                    <li>The notebook used to generate the clustering figures can be found <a href="../notebooks/gather_data_clustering.ipynb" download>here</a>.</li>
+                </ul>
+            </div>
+
+        </div>
     </div>
-
-    <div class="w3-content" style="max-width:1200px">
-      <div class="w3-center">
-        <img src="../images/module2_images/minutes_played_all_players.png" class="w3-image" style="width:70%;">
-      </div>
-
-      <p>
-        Note the exponential drop-off in minutes — it's increasingly difficult to sustain a long NBA career. Yet, there are still many productive players who haven’t cracked the top 10 in points or assists.
-      </p>
-
-      <p>
-        Below is a labeled scatter plot of total career assists versus total career points for both groups of athletes.
-      </p>
-
-      <div class="w3-center">
-        <img src="../images/module1_images/pts_asts_scatter.png" class="w3-image" style="width:70%;">
-      </div>
-
-      <p>
-        The orange dots represent leaderboard players, while blue dots represent high-minute active players. The visible separation suggests statistical differences — but does KMeans clustering agree?
-      </p>
-
-      <p>
-        KMeans clustering works by initializing <i>k</i> centroids, assigning each point to the nearest one, then updating the centroids until convergence. Below are the results for this dataset:
-      </p>
-
-      <div class="w3-center">
-        <img src="../images/module2_images/kmeans.png" class="w3-image" style="width:70%;">
-      </div>
-
-      <p>
-        Interestingly, the KMeans algorithm does not cleanly separate leaderboard players from others. This suggests that longevity (measured by minutes) — not intrinsic ability — is the main divider. Given enough time, high-minute players are likely to join the leaderboard ranks.
-      </p>
-    </div>
-  </div>
 </div>
 
 <!-- Footer -->
