@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clustering - Nugget Analysis</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+  <style>
+    body, html {
+      height: 100%;
+      font-family: "Georgia", sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-row w3-padding w3-black">
+    <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
+    <div class="w3-col s2"><a href="data.html" class="w3-button w3-block w3-black">Data Prep</a></div>
+    <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
+    <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
+    <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
+    <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
+  </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-sand w3-grayscale w3-large">
+  <div class="w3-container" id="model3">
+    <div class="w3-content" style="max-width:700px">
+      <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Clustering</span></h5>
+
+      <p>
+        To assess if Jokić and Westbrook should be among the greatest NBA players of all time, I gathered data on all-time leaders in scoring and assists, then compared them to the top 20 currently active players (by minutes played) who are not on the leaderboard.
+      </p>
+      <p>
+        This comparison helps determine whether a statistical difference exists between long-tenured high performers and current high-usage players. A histogram below shows the total career minutes played by all active players not on the leaderboards.
+      </p>
+    </div>
+
+    <div class="w3-content" style="max-width:1200px">
+      <div class="w3-center">
+        <img src="../images/module2_images/minutes_played_all_players.png" class="w3-image" style="width:70%;">
+      </div>
+
+      <p>
+        Note the exponential drop-off in minutes — it's increasingly difficult to sustain a long NBA career. Yet, there are still many productive players who haven’t cracked the top 10 in points or assists.
+      </p>
+
+      <p>
+        Below is a labeled scatter plot of total career assists versus total career points for both groups of athletes.
+      </p>
+
+      <div class="w3-center">
+        <img src="../images/module1_images/pts_asts_scatter.png" class="w3-image" style="width:70%;">
+      </div>
+
+      <p>
+        The orange dots represent leaderboard players, while blue dots represent high-minute active players. The visible separation suggests statistical differences — but does KMeans clustering agree?
+      </p>
+
+      <p>
+        KMeans clustering works by initializing <i>k</i> centroids, assigning each point to the nearest one, then updating the centroids until convergence. Below are the results for this dataset:
+      </p>
+
+      <div class="w3-center">
+        <img src="../images/module2_images/kmeans.png" class="w3-image" style="width:70%;">
+      </div>
+
+      <p>
+        Interestingly, the KMeans algorithm does not cleanly separate leaderboard players from others. This suggests that longevity (measured by minutes) — not intrinsic ability — is the main divider. Given enough time, high-minute players are likely to join the leaderboard ranks.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+  <p>This analysis is done for the University of Colorado, Boulder, as part of the curriculum for CS 5612</p>
+  <p>Template provided <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>

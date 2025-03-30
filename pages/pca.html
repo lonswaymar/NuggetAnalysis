@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PCA - Nugget Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <style>
+        body, html {
+            height: 100%;
+            font-family: "Georgia", sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="w3-top">
+        <div class="w3-row w3-padding w3-black">
+            <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
+            <div class="w3-col s2"><a href="data.html" class="w3-button w3-block w3-black">Data Prep</a></div>
+            <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
+            <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
+            <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
+            <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="w3-sand w3-grayscale w3-large">
+        <div class="w3-container" id="model2">
+            <div class="w3-content" style="max-width:900px">
+                <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Principal Component Analysis (PCA)</span></h5>
+
+                <!-- Paragraph one on PCA and endpoint -->
+                <p><strong>PCA</strong> is a dimensionality reduction technique that helps simplify complex, high-dimensional data into a smaller number of components while preserving as much variation as possible.</p>
+                <p>In this analysis, we apply PCA to NBA player stats from the <code>leaguedashplayerstats</code> endpoint to understand how players group by performance style.</p>
+
+                <p>The raw data from the <code>leaguedashplayerstats</code> endpoint looks like this.</p>
+                
+                <!-- Total data from endpoint + STARTER column I created -->
+                <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 400px;">                                            
+                    <table class="w3-table w3-bordered w3-small">
+                        <thead>
+                            <tr>
+                                <th>PLAYER_ID</th><th>PLAYER_NAME</th><th>NICKNAME</th><th>TEAM_ID</th><th>TEAM_ABBREVIATION</th><th>AGE</th><th>GP</th><th>W</th><th>L</th><th>W_PCT</th><th>MIN</th><th>FGM</th><th>FGA</th><th>FG_PCT</th><th>FG3M</th><th>FG3A</th><th>FG3_PCT</th><th>FTM</th><th>FTA</th><th>FT_PCT</th><th>OREB</th><th>DREB</th><th>REB</th><th>AST</th><th>TOV</th><th>STL</th><th>BLK</th><th>BLKA</th><th>PF</th><th>PFD</th><th>PTS</th><th>PLUS_MINUS</th><th>NBA_FANTASY_PTS</th><th>DD2</th><th>TD3</th><th>WNBA_FANTASY_PTS</th><th>GP_RANK</th><th>W_RANK</th><th>L_RANK</th><th>W_PCT_RANK</th><th>MIN_RANK</th><th>FGM_RANK</th><th>FGA_RANK</th><th>FG_PCT_RANK</th><th>FG3M_RANK</th><th>FG3A_RANK</th><th>FG3_PCT_RANK</th><th>FTM_RANK</th><th>FTA_RANK</th><th>FT_PCT_RANK</th><th>OREB_RANK</th><th>DREB_RANK</th><th>REB_RANK</th><th>AST_RANK</th><th>TOV_RANK</th><th>STL_RANK</th><th>BLK_RANK</th><th>BLKA_RANK</th><th>PF_RANK</th><th>PFD_RANK</th><th>PTS_RANK</th><th>PLUS_MINUS_RANK</th><th>NBA_FANTASY_PTS_RANK</th><th>DD2_RANK</th><th>TD3_RANK</th><th>WNBA_FANTASY_PTS_RANK</th><th>STARTER</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1630639</td><td>A.J. Lawson</td><td>A.J.</td><td>1610612742</td><td>DAL</td><td>23.0</td><td>42</td><td>27</td><td>15</td><td>0.643</td><td>310.90</td><td>54</td><td>121</td><td>0.446</td><td>13</td><td>50</td><td>0.260</td><td>15</td><td>23</td><td>0.652</td><td>14</td><td>36</td><td>50</td><td>20</td><td>14</td><td>10</td><td>3</td><td>8</td><td>22</td><td>13</td><td>136</td><td>18</td><td>251.0</td><td>0</td><td>0</td><td>245.0</td><td>341</td><td>231</td><td>168</td><td>105</td><td>410</td><td>378</td><td>373</td><td>303</td><td>346</td><td>338</td><td>428</td><td>382</td><td>374</td><td>445</td><td>389</td><td>407</td><td>408</td><td>414</td><td>394</td><td>386</td><td>428</td><td>211</td><td>148</td><td>415</td><td>385</td><td>192</td><td>400</td><td>257</td><td>38</td><td>405</td><td>False</td></tr>
+                            <tr><td>1631260</td><td>AJ Green</td><td>AJ</td><td>1610612749</td><td>MIL</td><td>24.0</td><td>56</td><td>35</td><td>21</td><td>0.625</td><td>614.28</td><td>83</td><td>196</td><td>0.423</td><td>69</td><td>169</td><td>0.408</td><td>17</td><td>19</td><td>0.895</td><td>9</td><td>55</td><td>64</td><td>30</td><td>12</td><td>9</td><td>4</td><td>3</td><td>49</td><td>20</td><td>252</td><td>50</td><td>400.8</td><td>0</td><td>0</td><td>441.0</td><td>252</td><td>155</td><td>253</td><td>128</td><td>333</td><td>327</td><td>320</td><td>393</td><td>191</td><td>205</td><td>72</td><td>372</td><td>388</td><td>54</td><td>424</td><td>366</td><td>381</td><td>373</td><td>409</td><td>398</td><td>410</td><td>121</td><td>223</td><td>375</td><td>313</td><td>145</td><td>369</td><td>257</td><td>38</td><td>343</td><td>False</td></tr>
+                            <tr><td>1631100</td><td>AJ Griffin</td><td>AJ</td><td>1610612737</td><td>ATL</td><td>20.0</td><td>20</td><td>8</td><td>12</td><td>0.400</td><td>170.73</td><td>18</td><td>62</td><td>0.290</td><td>10</td><td>39</td><td>0.256</td><td>2</td><td>2</td><td>1.000</td><td>2</td><td>16</td><td>18</td><td>5</td><td>8</td><td>1</td><td>2</td><td>3</td><td>6</td><td>1</td><td>48</td><td>-51</td><td>78.1</td><td>0</td><td>0</td><td>87.0</td><td>439</td><td>423</td><td>138</td><td>385</td><td>445</td><td>447</td><td>434</td><td>541</td><td>372</td><td>363</td><td>429</td><td>487</td><td>493</td><td>1</td><td>507</td><td>463</td><td>475</td><td>488</td><td>435</td><td>509</td><td>451</td><td>121</td><td>77</td><td>519</td><td>450</td><td>396</td><td>480</td><td>257</td><td>38</td><td>469</td><td>False</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p>At this step, I've added one feature only: STARTER. I created this feature by dividing the columns MIN/GP and masking the values above 25 minutes/game to be True. This division divides a players total season minutes played by total games played. 
+                This will help us see clusters in the following PCA analysis below. My goal was to determine if a starting athlete in the basketball lineup produces significantly different stats compared to players that come off the bench.
+                I had to create the STARTER label because athletes are not officially designated starters; this can vary game-to-game. Because games are 48 minutes long, most starters end up playing over half of the total game. That is why I chose the 25 minutes/game played threshold.
+                </p>
+                <p>However, MANY of the features in the original data are either qualitative, like TEAM_ABBREVIATION or PLAYER_NAME, or ordinal, like AGE or any feature ending in RANK, which describes an athletes rank over the season for that stat. For example, an athlete with 4 listed under AST would be the individual with the 4th most assists for that year.
+                Removing these features, I was left with the following cleaned data:
+                </p>
+                
+                <!-- Cleaned table -->
+                <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                    <table class="w3-table w3-bordered w3-small">
+                        <thead>
+                            <tr>
+                                <th>FGM</th><th>FGA</th><th>FG_PCT</th><th>FG3M</th><th>FG3A</th><th>FG3_PCT</th><th>FTM</th><th>FTA</th><th>FT_PCT</th><th>OREB</th><th>DREB</th><th>REB</th><th>AST</th><th>TOV</th><th>STL</th><th>BLK</th><th>BLKA</th><th>PF</th><th>PFD</th><th>PTS</th><th>PLUS_MINUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>54</td><td>121</td><td>0.446</td><td>13</td><td>50</td><td>0.260</td><td>15</td><td>23</td><td>0.652</td><td>14</td><td>36</td><td>50</td><td>20</td><td>14</td><td>10</td><td>3</td><td>8</td><td>22</td><td>13</td><td>136</td><td>18</td></tr>
+                            <tr><td>83</td><td>196</td><td>0.423</td><td>69</td><td>169</td><td>0.408</td><td>17</td><td>19</td><td>0.895</td><td>9</td><td>55</td><td>64</td><td>30</td><td>12</td><td>9</td><td>4</td><td>3</td><td>49</td><td>20</td><td>252</td><td>50</td></tr>
+                            <tr><td>18</td><td>62</td><td>0.290</td><td>10</td><td>39</td><td>0.256</td><td>2</td><td>2</td><td>1.000</td><td>2</td><td>16</td><td>18</td><td>5</td><td>8</td><td>1</td><td>2</td><td>3</td><td>6</td><td>1</td><td>48</td><td>-51</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p>Lastly, it is important to note what all of the statistics (i.e, features) mean in the context of the basketball game. The table below describes each one. 
+                Note that some columns are directly related to another column per the expression in the parenthesis. This makes this dataset ripe for a variable decomposition like principal component analysis.</p>
+                
+                <div class="w3-container w3-margin-top">
+                    <div style="overflow-y: auto; max-height: 400px; border: 1px solid #ccc; padding: 8px;">
+                        <table class="w3-table w3-bordered w3-small">
+                            <thead>
+                                <tr>
+                                    <th>Stat</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>FGM</td><td>Field Goals Made</td></tr>
+                                <tr><td>FGA</td><td>Field Goals Attempted</td></tr>
+                                <tr><td>FG_PCT</td><td>Field Goal Percentage (FGM ÷ FGA)</td></tr>
+                                <tr><td>FG3M</td><td>Three-Point Field Goals Made</td></tr>
+                                <tr><td>FG3A</td><td>Three-Point Field Goals Attempted</td></tr>
+                                <tr><td>FG3_PCT</td><td>Three-Point Percentage (FG3M ÷ FG3A)</td></tr>
+                                <tr><td>FTM</td><td>Free Throws Made</td></tr>
+                                <tr><td>FTA</td><td>Free Throws Attempted</td></tr>
+                                <tr><td>FT_PCT</td><td>Free Throw Percentage (FTM ÷ FTA)</td></tr>
+                                <tr><td>OREB</td><td>Offensive Rebounds</td></tr>
+                                <tr><td>DREB</td><td>Defensive Rebounds</td></tr>
+                                <tr><td>REB</td><td>Total Rebounds (OREB + DREB)</td></tr>
+                                <tr><td>AST</td><td>Assists</td></tr>
+                                <tr><td>TOV</td><td>Turnovers</td></tr>
+                                <tr><td>STL</td><td>Steals</td></tr>
+                                <tr><td>BLK</td><td>Blocks</td></tr>
+                                <tr><td>BLKA</td><td>Blocked Field Goal Attempts Against</td></tr>
+                                <tr><td>PF</td><td>Personal Fouls Committed</td></tr>
+                                <tr><td>PFD</td><td>Personal Fouls Drawn</td></tr>
+                                <tr><td>PTS</td><td>Total Points Scored</td></tr>
+                                <tr><td>PLUS_MINUS</td><td>Point differential while the player is on the court</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <p>Having addressed the data from the <code>leaguedashplayerstats</code> endpoint and how it was cleaned for PCA, we can now look at a 2 and 3 component decomposition of the entire 
+                dataset. The figure below shows principal component (PC) two plotted by PC one. I've then used the <code>STARTER</code> to label the data. Notice that the bench players form a cluster 
+                towards the left side of the figure. Some bench players and most of the starters fan out righward from the grey cluster. 
+                </p>
+
+                <div class="w3-center">
+                    <img src="../images/module2_images/pca2.png" class="w3-image" style="width:100%; max-width:1000px;">
+                </div>
+                
+                <p>The 2 component decomposition retains about 73% of the original variance in the data. The 3 component decomposition, shown on a 3D axis below, retains an additional 6% of the variance,
+                pushing the total variance retained to about 79%.</p>
+
+                <div class="w3-center">
+                    <img src="../images/module2_images/pca3.png" class="w3-image" style="width:100%; max-width:1000px;">
+                </div>
+                
+                <p>The 3D image shows that a curvature appears in the data when adding the third component. Notably, the cluster of grey points associated with bench players still remains and the fan of data following 
+                the starters fans out along the curvature.
+                </p>
+                
+                <p>So far the principal component analysis yields a cluster with a spread of data moving away from it. However, there's still variance from the original dataset to be captured. We can see how each subsequent 
+                component captures less variance than the previous from this scree plot.
+                </p>
+                
+                <div class="w3-center">
+                    <img src="../images/module2_images/screeplot.png" class="w3-image" style="width:100%; max-width:1000px;">
+                </div>
+                
+                <p>Furthermore, if we wanted to show how many principal components would be required to attain 95% of the total variance in the original data, we can iteratively add components to the decomposition and extract
+                the total variance for each analysis. 
+                The following image shows a line marking 95% of the total variance on the y-axis. We can see that the data shown in blue belong to the analyses where over 95% of the data's variance was captured. 
+                <strong>To capture more than 95% of the data, greater than nine principal components are required</strong>, as indicated by the vertical line intersecting with the data and 95% threshold.
+                </p>
+                
+                <div class="w3-center">
+                    <img src="../images/module2_images/variance95.png" class="w3-image" style="width:100%; max-width:1000px;">
+                </div>
+                
+                <p>We can see that every subsequent point contributes less variance to the decomposition than the previous. This is exceptionally noteworthy beyond the 9th principal component, where the
+                explained variance asymptotically approaches 100%.
+                </p> 
+                <p>
+                Overall, the 3 eigenvalues that describe the 3D plot are shown in this snippet:
+                </p>
+                
+                <div class="w3-center">
+                    <img src="../images/module2_images/eigenvalues.png" class="w3-image" style="width:50%; max-width:1000px;">
+                </div>
+                
+
+   
+
+                <!-- Download Section -->
+                <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
+                    <p><i>You can download the full PCA-prepared dataset <a href="../data/pca_cleaned_data.csv" download>here</a>.</i></p>
+                    <p><i>The notebook used to generate the PCA and figures can be found <a href="../notebooks/pca_analysis.ipynb" download>here</a>.</i></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+        <p>This analysis is done for the University of Colorado, Boulder, as part of the curriculum for CS 5612</p>
+        <p>Template provided <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+    </footer>
+
+</body>
+</html>
