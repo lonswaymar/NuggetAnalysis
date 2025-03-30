@@ -127,10 +127,72 @@
 
             
             <strong>DBSCAN</strong>
-            <p>
+            <p>The DBSCAN clustering algorithm works by associated data points based on density. The algorithm takes two parameters, 
+            a distance metric and quantity metric. The algorithm starts by checking every single point. If a point has an amount of
+            neighbors within the distance metric exceeding the quantity metric, the given point is considered a core point. This core 
+            point and its neighbors are considered a cluster. To expand on the cluster, the algorithm iterates through each of the 
+            neighboring points and determines if they can be a core point based on the distance and quantity metrics. When neighbors 
+            to a core point no longer become core points themselves, the current cluster is grouped and the algorithm moves on to the 
+            next unclustered data points. The algorithm stops when no more core points are found. Points without a cluster are considered 
+            outliers.
             </p>
             
+            <p>I've applied the DBSCAN algorithm to a dataset I've already used in the PCA tab. Like the values in the hierarchical
+            clustering, this cleaned dataset also comes from <code>leaguedashplayerstats</code> endpoint from the NBA API. Like the other clustering
+            algorithms, I've removed all qualitative and ordinal features and normalized the data. While I expand more on this in the PCA 
+            tab, the first three rows of the cleaned dataset are:
+            </p>
+            <!-- Cleaned table -->
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>FGM</th><th>FGA</th><th>FG_PCT</th><th>FG3M</th><th>FG3A</th><th>FG3_PCT</th><th>FTM</th><th>FTA</th><th>FT_PCT</th><th>OREB</th><th>DREB</th><th>REB</th><th>AST</th><th>TOV</th><th>STL</th><th>BLK</th><th>BLKA</th><th>PF</th><th>PFD</th><th>PTS</th><th>PLUS_MINUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>54</td><td>121</td><td>0.446</td><td>13</td><td>50</td><td>0.260</td><td>15</td><td>23</td><td>0.652</td><td>14</td><td>36</td><td>50</td><td>20</td><td>14</td><td>10</td><td>3</td><td>8</td><td>22</td><td>13</td><td>136</td><td>18</td></tr>
+                        <tr><td>83</td><td>196</td><td>0.423</td><td>69</td><td>169</td><td>0.408</td><td>17</td><td>19</td><td>0.895</td><td>9</td><td>55</td><td>64</td><td>30</td><td>12</td><td>9</td><td>4</td><td>3</td><td>49</td><td>20</td><td>252</td><td>50</td></tr>
+                        <tr><td>18</td><td>62</td><td>0.290</td><td>10</td><td>39</td><td>0.256</td><td>2</td><td>2</td><td>1.000</td><td>2</td><td>16</td><td>18</td><td>5</td><td>8</td><td>1</td><td>2</td><td>3</td><td>6</td><td>1</td><td>48</td><td>-51</td></tr>
+                    </tbody>
+                </table>
+            </div>            
+           
+            <p>After applying a Gaussian normalization with the <code>StandardScalar</code> function from the sklearn.preprocessing library, I applied 
+            principal component analysis with two components. The results are plotted and I've color coded the athletes based on whether or not they consistently
+            started or came off the bench for the 2023-2024 season.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module2_images/pca2.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div>
+            
+            <p>Note that there is clustering of the bench players towards the left of the graph. With my classification of starter and bench player, I could assess
+            the accuracy of the DBSCAN algorithm. After tweaking the parameters of the DBSCAN algorithm by hand, I was able to achieve an <strong>accuracy score of about
+            87%</strong>. This score was calculated by taking the classification labels of the DBSCAN algorithm and comparing them to my classifications of bench or starting athlete
+            in the original data. Accuracy was calculated by dividing the number of consistent classifications by the total number of athletes in the dataset. The results of
+            the clustering are shown below.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module2_images/dbscan.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div>
+            
+            <p>The image shows the grey cluster is largely centered in the same location for that of the actual classifications in the previous figure. 
+            These datapoints are responsible for the decent accuracy score mentioned above. However, because DBSCAN is a <em>density</em> based clustering algorithm,
+            it is no suprise that the algorithm fails to classify correctly the spread of bench players that deviate from the grey cluster.
+            </p>
+            
+            <p> Ultimately, the conclusions from tab are that
+            <ul>
+                <li>The leading scorers aren't inherentily from a separate population - they're just the best at what they do given the amount of time they've played.</li>
+                <li>Hierarchical clustering can be shown to group athletes of similar position on the court and talent prominence within their team</li>
+                <li>DBSCAN algorithm can work to identify the core of where the bench players reside in a PCA analysis, but that density based clustering algorithms struggle
+                to account for spreads of data away from the main cluster that are still within the given classification.</li>
+            </ul>
+            
             <!-- Download Section -->
+            <strong>Data Download</strong>
             <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
                 <ul>
                     <li>The raw data from <code>leaguedashplayerstats</code> for the 2023-2024 season can be downloaded <a href="../data/module2_data/leaguedashplayerstats.csv" download>here</a>.</li>
