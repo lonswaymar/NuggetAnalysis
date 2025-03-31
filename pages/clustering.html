@@ -34,37 +34,106 @@
             <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Clustering</span></h5>
             
             <strong>KMeans Clustering</strong>
-            <p>To assess if Jokić and Westbrook should be among the greatest NBA players of all time, I gathered data on all-time leaders in scoring and assists, then compared them to the top 20 currently active players (by minutes played) who are not on the leaderboard.
+            <p>To apply Kmeans clustering, I began by getting the career statistics of two different populations of NBA players.
+            The first population of career statistics were gathered from the <code>alltimeleadersgrids</code> endpoint. This allowed me to grab
+            the player names and IDs of the top 10 athletes of all time in scoring and assists.
             </p>
+            <p>The second population of data I gathered were from all currently active athletes in the NBA. I then filtered out the IDs of 
+            individuals in both categories. For example, LeBron James was present in the top 10 scorers of all time, and is still actively playing.
+            Thus, I removed his name from the list of all active players. 
+            </p>
+            
+            <p>
+            My goal at this part of the analysis was to determine if the all time leaders in points and assists were <strong>from a different population</strong>
+            than their modern-day peers that aren't in the leadership board but still have played the most minutes. After grabbing the career stats For
+            all active players from the <code>PlayerCareerStats</code> endpoint, I then merged the two datasets into the a dataframe I used for the rest
+            of the Kmeans analysis. Note that I've added the label <code>LEADER</code> but that this label is dropped when applying the Kmeans algorithm.
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>MIN</th>
+                            <th>PTS</th>
+                            <th>AST</th>
+                            <th>LEADER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2498.0</td>
+                            <td>862.0</td>
+                            <td>168.0</td>
+                            <td>NONLEADER</td>
+                        </tr>
+                        <tr>
+                            <td>48654.0</td>
+                            <td>33643.0</td>
+                            <td>6306.0</td>
+                            <td>LEADER</td>
+                        </tr>
+                        <tr>
+                            <td>2133.0</td>
+                            <td>666.0</td>
+                            <td>303.0</td>
+                            <td>NONLEADER</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
       
-            <p>This comparison helps determine whether a statistical difference exists between long-tenured high performers and current high-usage players. A histogram below shows the total career minutes played by all active players not on the leaderboards.
+            <p>Before implementing KMeans, however, I noticed it wouldn't be fair to compare the stats leaders to just any other athlete (afterall, some athletes come off the bench for their entire career).
+            So, I only used NBA players whose current playing time exceeds the 90th percentile in minutes played. A histogram of the <code>MIN</code> column from the cleaned dataset is plotted below. I've used
+            a vertical line to mark the 90th percentile in minutes. By eye, we can clearly see a right skewed distribution with the amount of players rapidly diminishing as minutes played increases. 
             </p>
         
             <div class="w3-center">
                 <img src="../images/module2_images/minutes_played_all_players.png" class="w3-image" style="width:70%;">
             </div>
 
-            <p>Note the exponential drop-off in minutes — it's increasingly difficult to sustain a long NBA career. Yet, there are still many productive players who haven’t cracked the top 10 in points or assists.
+            <p>Note the exponential drop-off in minutes — I believe that this means that it's increasingly difficult to sustain a long NBA career. 
+            Yet, there are still many productive players who haven’t cracked the top 10 in points or assists.
             </p>
 
-            <p>Below is a labeled scatter plot of total career assists versus total career points for both groups of athletes.
+            <p>Below is a labeled scatter plot of total career assists versus total career points for both groups of athletes. The leaders' data is color coded green. 
+            The 90th percentile of active players is grey. 
             </p>
 
             <div class="w3-center">
-                <img src="../images/module1_images/pts_asts_scatter.png" class="w3-image" style="width:70%;">
+                <img src="../images/module2_images/pts_asts_scatter.png" class="w3-image" style="width:70%;">
             </div>
 
-            <p>The orange dots represent leaderboard players, while blue dots represent high-minute active players. The visible separation suggests statistical differences — but does KMeans clustering agree?
-            </p>
-
-            <p>KMeans clustering works by initializing <i>k</i> centroids, assigning each point to the nearest one, then updating the centroids until convergence. Below are the results for this dataset:
+            <p>By eye, it's challenging to see if there are distinct clusters in the data. Can KMeans clustering identify the leaders versus the top currently played athletes? 
+            To assess this, I standardized the data with the <code>StandardScaler</code> from the sklearn's preprocessing library. In addition to dropping the <code>LEADER</code>
+            label, I also dropped the <code>MIN</code> column so that the clustering wouldn't be influenced by an athlete's time playing basketball, but rather just the amount of
+            points and assists they've made. The results are shown below.
             </p>
 
             <div class="w3-center">
                 <img src="../images/module2_images/kmeans.png" class="w3-image" style="width:70%;">
             </div>
 
-            <p>Interestingly, the KMeans algorithm does not cleanly separate leaderboard players from others. This suggests that longevity (measured by minutes) — not intrinsic ability — is the main divider. Given enough time, high-minute players are likely to join the leaderboard ranks.
+            <p>KMeans clustering works by randomly initializing the location of a user-defined <em>k</em>-amount of centroids. The centroids initial location will be within the space of the data.
+            The algorithm then assigns each data point to the nearest centroid. These grouped data points become a cluster.
+            That centroid's location is then updated to be the average value of the data within that cluster. KMeans does this for each of the <em>k</em> centroids. The algorithm stops when the locations of the 
+            centroids stop moving and all points have been attributed to one of the <em>k</em> clusters.
+            </p>
+            <p>Because Kmeans clustering starts with randomized centroid locations and only stops when the centroids cease to move, determining
+            an accuracy for KMeans label classification and true data labels can be challenging. More specifically, <em>KMeans might cluster differently
+            for every implementation - even on the same exact data.</em>
+            To account for this, I ran a small simulation that performs KMeans 100 times. I calculated the accuracy of the labels as compared to the 
+            <code>LEADER</code> column. The accuracy found two modes. They're shown in their proportion in the following bar chart.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module2_images/kmeans_sim.png" class="w3-image" style="width:70%;">
+            </div>
+            
+            <p>KMeans seems to classify the data well! The algorithm seems to generate accuracies of about 90-91% in its classification of leaders versus
+            currently active players when assessing just their points and assists. 
             </p>
             
             <strong>Hierarchical Clustering</strong>
@@ -183,9 +252,10 @@
             it is no suprise that the algorithm fails to classify correctly the spread of bench players that deviate from the grey cluster.
             </p>
             
-            <p> Ultimately, the conclusions from tab are that
+            <p> Ultimately, the <strong>conclusions</strong> from this tab are that
             <ul>
-                <li>The leading scorers aren't inherentily from a separate population - they're just the best at what they do given the amount of time they've played.</li>
+                <li>The leading scorers and assist makers seem to be from an inherently separate population compared to the current active players with the most minutes. 
+                Kmeans clustering of the data revealed an accuracy of around 90% in classifying the populations from each other.</li>
                 <li>Hierarchical clustering can be shown to group athletes of similar position on the court and talent prominence within their team</li>
                 <li>DBSCAN algorithm can work to identify the core of where the bench players reside in a PCA analysis, but that density based clustering algorithms struggle
                 to account for spreads of data away from the main cluster that are still within the given classification.</li>
