@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ARM - Nugget Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <style>
+        body, html {
+            height: 100%;
+            font-family: "Georgia", sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
+        <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
+        <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
+        <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
+        <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-sand w3-grayscale w3-large">
+    <div class="w3-container" id="arm">
+        <div class="w3-content" style="max-width:900px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Association Rule Mining (ARM)</span></h5>
+
+            <!-- Section (a) Overview -->
+            <h6><strong>Overview</strong></h6>
+            <p>Association Rule Mining is used to find relationships (rules) between items in large datasets. A rule has the form <code>{A} => {B}</code>, meaning if A occurs, B likely occurs too. Key metrics include:</p>
+            <ul>
+                <li><strong>Support</strong>: How frequently an itemset appears in the dataset</li>
+                <li><strong>Confidence</strong>: How often items in B appear in transactions that contain A</li>
+                <li><strong>Lift</strong>: Ratio of observed support to expected support if A and B were independent</li>
+            </ul>
+            
+            <p>The <strong>Apriori</strong> algorithm finds frequent itemsets by iteratively expanding them and pruning those below a minimum support threshold. 
+            The diagram below (credit to author Lin Hu in the paper <em>Research on English Achievement Analysis Based on Improved CARMA Algorithm</em>) helps explain how the apriori algorithm 
+            starts with 1-itemsets (single items), counts their
+            frequency in the total transactional database and moves forward with the item if they're found to be above a minimum support threshold. If the items are above that threshold,
+            the algorithm then moves forward and checks the occurence of every 2-itemsets (every possible pair of 1-itemsets that passed the pruning based on the minimum support threshold). 
+            Apriori stopswhen no more frequent itemsets are found.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module2_images/schematic.png" class="w3-image" style="width:60%; max-width:1000px;">
+            </div>
+            
+            <p>In the context of basketball, ARM might seem a bit silly considering that most available data is in record format. However, the nature of a given basketball play
+            usually involves many players and situations that can be considered like items in transaction. For example, some plays might simply involve one player shooting a basket.
+            They may miss, score, or get blocked. Other plays might invovle the multiple players from one team and a defender from the opposing team. The second scenario here would be
+            analogous to a larger list of items in a transaction. My favorite transactions to watch are similar to the one in the YouTube video below. 
+            </p>
+            
+            <div style="text-align: center;">
+                <iframe width="315" height="560"
+                    src="https://www.youtube.com/embed/0drBIeMOQJk"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+
+            
+            <p>In this clip, from YouTube user, DV highlights, Jokić performs a behind the back pass to Aaron Gordon who completes a running dunk. 
+            Can ARM help determine the frequency of offensive plays like this? Generally, I am interested in determining rules that can be mined by assessing which players 
+            interacting in a basketball game to lead to scores. The following section describes how I turned record data into transaction data to answer these question. 
+            </p>
+            
+            <!-- Section (b) Data Prep -->
+            <h6 class="w3-margin-top"><strong>Data Preparation</strong></h6>
+            <p>The data was gathered from the <code>playbyplayv2</code> endpoint from the NBA API. For this analyais, I used the play-by-play stats of Game 7 of the Nuggets vs.
+            Minnesota Timberwolves in the 2024 conference semi-finals. Here is a snippet of the original data.
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>GAME_ID</th><th>EVENTNUM</th><th>EVENTMSGTYPE</th><th>EVENTMSGACTIONTYPE</th><th>PERIOD</th>
+                            <th>WCTIMESTRING</th><th>PCTIMESTRING</th><th>HOMEDESCRIPTION</th><th>NEUTRALDESCRIPTION</th>
+                            <th>VISITORDESCRIPTION</th><th>SCORE</th><th>SCOREMARGIN</th><th>PERSON1TYPE</th><th>PLAYER1_ID</th>
+                            <th>PLAYER1_NAME</th><th>PLAYER1_TEAM_ID</th><th>PLAYER1_TEAM_CITY</th><th>PLAYER1_TEAM_NICKNAME</th>
+                            <th>PLAYER1_TEAM_ABBREVIATION</th><th>PERSON2TYPE</th><th>PLAYER2_ID</th><th>PLAYER2_NAME</th>
+                            <th>PLAYER2_TEAM_ID</th><th>PLAYER2_TEAM_CITY</th><th>PLAYER2_TEAM_NICKNAME</th>
+                            <th>PLAYER2_TEAM_ABBREVIATION</th><th>PERSON3TYPE</th><th>PLAYER3_ID</th><th>PLAYER3_NAME</th>
+                            <th>PLAYER3_TEAM_ID</th><th>PLAYER3_TEAM_CITY</th><th>PLAYER3_TEAM_NICKNAME</th>
+                            <th>PLAYER3_TEAM_ABBREVIATION</th><th>VIDEO_AVAILABLE_FLAG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0042300237</td><td>2</td><td>12</td><td>0</td><td>1</td><td>8:07 PM</td><td>12:00</td>
+                            <td>None</td><td>Start of 1st Period (8:07 PM EST)</td><td>None</td><td>None</td><td>None</td>
+                            <td>None</td><td>0</td><td>0</td><td>None</td><td></td><td></td><td></td>
+                            <td>0</td><td>0</td><td></td><td></td><td></td><td></td><td></td>
+                            <td>0</td><td>0</td><td></td><td></td><td></td><td></td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td>0042300237</td><td>4</td><td>10</td><td>0</td><td>1</td><td>8:07 PM</td><td>12:00</td>
+                            <td>Jump Ball Jokic vs. Gobert: Tip to Edwards</td><td>None</td><td>None</td><td>None</td><td>None</td>
+                            <td>4</td><td>203999</td><td>Nikola Jokić</td><td>1610612743</td><td>Denver</td><td>Nuggets</td><td>DEN</td>
+                            <td>5</td><td>203497</td><td>Rudy Gobert</td><td>1610612740</td><td>Minnesota</td><td>Timberwolves</td><td>MIN</td>
+                            <td>5</td><td>1630162</td><td>Anthony Edwards</td><td>1610612740</td><td>Minnesota</td><td>Timberwolves</td><td>MIN</td><td>1</td>
+                        </tr>
+                        <tr>
+                            <td>0042300237</td><td>7</td><td>6</td><td>4</td><td>1</td><td>8:07 PM</td><td>11:47</td>
+                            <td>None</td><td>None</td><td>Gobert OFF.Foul (P1) (S.Foster)</td><td>None</td><td>None</td>
+                            <td>5</td><td>203497</td><td>Rudy Gobert</td><td>1610612740</td><td>Minnesota</td><td>Timberwolves</td><td>MIN</td>
+                            <td>4</td><td>1627750</td><td>Jamal Murray</td><td>1610612743</td><td>Denver</td><td>Nuggets</td><td>DEN</td>
+                            <td>1</td><td>0</td><td></td><td></td><td></td><td></td><td>1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>To clean the record data, I cleaned by two criteria.
+                <ul>
+                    <li>I ensured that the cleaned data frame only contained rows where <code>EVENTMSGTYPE</code> was set to one or two. These values correlate to making and missing
+                    a shot, respectively.</li>
+                    <li> I then removed rows of data where <code>PLAYER1_TEAM_CITY</code> was not Denver.</li>
+                </ul>
+            Combined, these two criteria work well to ensure that all of the plays in the remaining data correlate to the Nugget's offensive possessions. Finally, I dropped all 
+            all columns but <code>EVENTMSGTYPE</code>, <code>PLAYER1_NAME</code>, <code>PLAYER2_NAME</code>, <code>PLAYER3_NAME</code>, and <code>EVENTMSGACTIONTYPE</code>.
+            The final cleaned <em>record</em> data looks like
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>PLAYER1_NAME</th>
+                            <th>PLAYER2_NAME</th>
+                            <th>PLAYER3_NAME</th>
+                            <th>SHOTSTATUS</th>
+                            <th>SHOTACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Jamal Murray</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>MISS</td>
+                            <td>DRIVING_FINGER_ROLL_LAYUP</td>
+                        </tr>
+                        <tr>
+                            <td>Michael Porter Jr.</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>MISS</td>
+                            <td>DRIVING_FINGER_ROLL_LAYUP</td>
+                        </tr>
+                        <tr>
+                            <td>Michael Porter Jr.</td>
+                            <td>None</td>
+                            <td>Rudy Gobert</td>
+                            <td>MISS</td>
+                            <td>DRIVING_LAYUP</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>Finally, I can extract the rows of the dataframe and then remove the <code>None</code> items. This final change formats the dataset as transactional data.
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Items</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Jamal Murray, MISS, DRIVING_FINGER_ROLL_LAYUP</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Michael Porter Jr., MISS, DRIVING_FINGER_ROLL_LAYUP</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Michael Porter Jr., Rudy Gobert, MISS, DRIVING_LAYUP</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+            <!-- Section (c) Code ARM -->
+            <h6 class="w3-margin-top"><strong>Code & Implementation</strong></h6>
+            <p>The ARM implementation was done in Python using the <code>mlxtend</code> library. The transactional dataset was transformed into a 
+            one-hot encoded format and Apriori was applied.The following section will show the top 15 rules for support, confidence, and lift. I will discuss 
+            poingant rules found in each table.
+            </p>
+            
+
+            <!-- Section (d) Results -->
+            <h6 class="w3-margin-top"><strong>Support Rules</strong></h6>
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>Antecedents</th>
+                            <th>Consequents</th>
+                            <th>Support</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>(GOAL)</td><td>(Nikola Jokić)</td><td>0.240964</td></tr>
+                        <tr><td>(Nikola Jokić)</td><td>(GOAL)</td><td>0.240964</td></tr>
+                        <tr><td>(JUMP_SHOT)</td><td>(MISS)</td><td>0.192771</td></tr>
+                        <tr><td>(MISS)</td><td>(JUMP_SHOT)</td><td>0.192771</td></tr>
+                        <tr><td>(Jamal Murray)</td><td>(GOAL)</td><td>0.192771</td></tr>
+                        <tr><td>(GOAL)</td><td>(Jamal Murray)</td><td>0.192771</td></tr>
+                        <tr><td>(Nikola Jokić)</td><td>(MISS)</td><td>0.180723</td></tr>
+                        <tr><td>(MISS)</td><td>(Nikola Jokić)</td><td>0.180723</td></tr>
+                        <tr><td>(MISS)</td><td>(Jamal Murray)</td><td>0.168675</td></tr>
+                        <tr><td>(Jamal Murray)</td><td>(MISS)</td><td>0.168675</td></tr>
+                        <tr><td>(Nikola Jokić)</td><td>(JUMP_SHOT)</td><td>0.132530</td></tr>
+                        <tr><td>(JUMP_SHOT)</td><td>(Nikola Jokić)</td><td>0.132530</td></tr>
+                        <tr><td>(Michael Porter Jr.)</td><td>(MISS)</td><td>0.108434</td></tr>
+                        <tr><td>(MISS)</td><td>(Michael Porter Jr.)</td><td>0.108434</td></tr>
+                        <tr><td>(Jamal Murray)</td><td>(Nikola Jokić)</td><td>0.084337</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>The first takeaway is that roughly 24% of offensive possessions involved both Jokić and GOAL, as indicated by the first two rows.
+            The third item shows that a whole 19% possessions involved missing a jump shot. Fortunately, Jamal Murray and GOAL appear just as
+            frequently together at same 19%. Note that because this table describes the support, the antecedents and the consequents describe what
+            items (i.e, players, goal status, goal type) appear together with frequency relative to the total amount of offensive transactions. Basically,
+            we can see that about 1/4 offensive plays involve Jokić scoring. 1/5 plays involves Murray scoring. However, this game also involved a lot of
+            jumpshots that didn't go in.
+           
+            </p>
+            
+            <h6 class="w3-margin-top"><strong>Confidence Rules</strong></h6>
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>Antecedents</th>
+                            <th>Consequents</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>(DRIVING_FINGER_ROLL_LAYUP, GOAL)</td><td>(Jamal Murray)</td><td>1.000000</td></tr>
+                        <tr><td>(LAYUP)</td><td>(MISS)</td><td>1.000000</td></tr>
+                        <tr><td>(Michael Porter Jr., JUMP_SHOT)</td><td>(MISS)</td><td>1.000000</td></tr>
+                        <tr><td>(Kentavious Caldwell-Pope, Nikola Jokić)</td><td>(GOAL)</td><td>1.000000</td></tr>
+                        <tr><td>(Nikola Jokić, Jamal Murray)</td><td>(GOAL)</td><td>1.000000</td></tr>
+                        <tr><td>(JUMP_SHOT, GOAL)</td><td>(Nikola Jokić)</td><td>1.000000</td></tr>
+                        <tr><td>(PULLUP_JUMP_SHOT)</td><td>(MISS)</td><td>1.000000</td></tr>
+                        <tr><td>(PUTBACK_LAYUP)</td><td>(Nikola Jokić)</td><td>1.000000</td></tr>
+                        <tr><td>(Nikola Jokić, LAYUP)</td><td>(MISS)</td><td>1.000000</td></tr>
+                        <tr><td>(Kentavious Caldwell-Pope, GOAL)</td><td>(Nikola Jokić)</td><td>0.800000</td></tr>
+                        <tr><td>(DRIVING_FINGER_ROLL_LAYUP)</td><td>(Jamal Murray)</td><td>0.800000</td></tr>
+                        <tr><td>(JUMP_SHOT)</td><td>(MISS)</td><td>0.761905</td></tr>
+                        <tr><td>(Michael Porter Jr.)</td><td>(MISS)</td><td>0.750000</td></tr>
+                        <tr><td>(LAYUP)</td><td>(Nikola Jokić)</td><td>0.750000</td></tr>
+                        <tr><td>(TURNAROUND_FADEAWAY)</td><td>(Nikola Jokić)</td><td>0.750000</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>The confidence table is a little bit more interesting. Remember that confidence describes what percentage of transactions the 
+            consequent alongside the antecedent relative to the number of interactions containing the antecedent. Looking at the top few interactions in 
+            the table, we can say that
+                <ul>
+                    <li>Every time Jamal Murray made a driving finger roll layup, he scored!</li>
+                    <li>Oppositely, every time Michael Porter Jr. made a jump shot, he missed!</li>
+                    <li>And, perhaps most suprising, (citing the second row in the table), every layup made was missed!</li>
+                </ul>
+            The third point is particularly suprising. How could a team miss every layup? I had to dig deeper into the data and its descriptions to understand.
+            </p>
+            
+            <p>
+            The <code>playbyplay</code> endpoint for the NBA API defines many different types of layups. For our dataset, I've plotted the frequency
+            of all layups documented for Denver's offensive possessions. A bar chart depicts this information below.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module2_images/layup_types.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div>           
+            
+            <p>We can see that the LAYUP item in the transaction data only refers to one type of the general layup. Generally, a layup is
+            defined as a basketball player scoring the ball when positioned just under the basket. This dataset, however, defines many different
+            types of layups. A driving finger roll layup involves the athlete charging towards the basket and letting the ball roll off the fingers
+            in motion towards the hoop. A putback layup involves rebounding a teammate's missed shot before scoring a layup. While the API does not
+            specify what a plain layup is, I imagine that it involves little translational movement from a scoring player that uses a traditional
+            shooting motion. While it was shocking to see that Denver had missed all shots defined as LAYUP, we see now from the bar chart that 
+            this was just one portion of the different types of layups the Nuggets had attempted.
+            </p>
+            <p>Furthemore, the Timberwolves, Denver's opponent for this dataset, are known to have reputable interior defense; they're good at preventing
+            other players from taking shots close to their basket. Thus, I personally hypothesize that Denver was unable to successfully make "normal" layups.
+            Rather, they were forced to play more aggressively. This change in play style might yield more driving putback layups than ordinary.
+            </p>
+            
+            <h6 class="w3-margin-top"><strong>Lift Rules</strong></h6>
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>Antecedents</th>
+                            <th>Consequents</th>
+                            <th>Lift</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>(LAYUP)</td><td>(MISS, Nikola Jokić)</td><td>4.150000</td></tr>
+                        <tr><td>(MISS, Nikola Jokić)</td><td>(LAYUP)</td><td>4.150000</td></tr>
+                        <tr><td>(DRIVING_FINGER_ROLL_LAYUP)</td><td>(Jamal Murray, GOAL)</td><td>3.112500</td></tr>
+                        <tr><td>(Jamal Murray, GOAL)</td><td>(DRIVING_FINGER_ROLL_LAYUP)</td><td>3.112500</td></tr>
+                        <tr><td>(Jamal Murray)</td><td>(DRIVING_FINGER_ROLL_LAYUP, GOAL)</td><td>2.766667</td></tr>
+                        <tr><td>(DRIVING_FINGER_ROLL_LAYUP, GOAL)</td><td>(Jamal Murray)</td><td>2.766667</td></tr>
+                        <tr><td>(FADEAWAY_JUMPER)</td><td>(MISS, Jamal Murray)</td><td>2.540816</td></tr>
+                        <tr><td>(MISS, Jamal Murray)</td><td>(FADEAWAY_JUMPER)</td><td>2.540816</td></tr>
+                        <tr><td>(GOAL)</td><td>(Nikola Jokić, Jamal Murray)</td><td>2.441176</td></tr>
+                        <tr><td>(Nikola Jokić, Jamal Murray)</td><td>(GOAL)</td><td>2.441176</td></tr>
+                        <tr><td>(Kentavious Caldwell-Pope, Nikola Jokić)</td><td>(GOAL)</td><td>2.441176</td></tr>
+                        <tr><td>(GOAL)</td><td>(Kentavious Caldwell-Pope, Nikola Jokić)</td><td>2.441176</td></tr>
+                        <tr><td>(Nikola Jokić)</td><td>(JUMP_SHOT, GOAL)</td><td>2.371429</td></tr>
+                        <tr><td>(JUMP_SHOT, GOAL)</td><td>(Nikola Jokić)</td><td>2.371429</td></tr>
+                        <tr><td>(PUTBACK_LAYUP)</td><td>(Nikola Jokić)</td><td>2.371429</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>Lift is a measurement of how much more often the antecedents and consequents appear together in a transaction than random
+            chance would suggest. For example, the first row can be read to say that the likelihood of a layup being missed while Jokić 
+            was involved in the play was 4.15x greater than if layups, misses and Jokić's presence were all statistically independent in
+            the dataset. It's important to note however, that lift does not suggest direction or causation. More specifically, even though
+            there's high correlation between Jokić and a missed layup, we are uncertain which athlete actually took the shot; the shot maker
+            could have been Jokić or one of his many teammates that he passes to.
+            </p>
+            <p>Secondly, I'd like to talk about the lift between Jamal Murray and driving finger roll layups. Given that these two items
+            were 3.11x more likely to occur together than random chance would suggest, it says that plays involving Murray often result in
+            successful driving finger roll layups! Having watched the Nuggets play for so long, this stat confirms my bias and opinions that
+            is one of the most explosive yet controlled players on the team.
+            </p>
+            
+            <!-- Section (e) Conclusions -->
+            <h6 class="w3-margin-top"><strong>Conclusions</strong></h6>
+            <p>Association rule mining helped surface some patterns I expected and a few surprises. For instance, about a quarter of all offensive plays involved both Jokić and a successful goal. 
+            Similarly, around 1 in 5 possessions featured Jamal Murray scoring, while jump shots were missed at almost the same rate. That third one stung a little. 
+            Seeing how often these items showed up together tells a simple but important story about how Denver ran their offense in this particular game—who they leaned on and how often things went 
+            wrong.
+
+            Confidence and lift helped add more nuance. Every time Murray made a driving finger roll layup, he scored. That was validating. Meanwhile, layups in the dataset labeled simply as “LAYUP” 
+            had a 100% miss rate, which was shocking at first. But then, I realized that the NBA API defines many types of layups—driving, cutting, putbacks, etc.—and plain “LAYUP” was just one subtype 
+            that happened to be ineffective in this game. That’s probably not a fluke. Minnesota has really strong interior defense, so maybe Denver was forced to use more aggressive or creative layup 
+            strategies like putbacks or finger rolls to even get close. That kind of defensive pressure might explain the stats more than just poor execution.
+            </p>
+            <p>Finally, regardless of defensive fortitude or the fact that Denver lost this game, the network shown below reveals that Jokić is truly in the center of the offensive scheme for Denver.
+            There are more edges connecting to Jokić than any other item in the network except for MISS. This shows how much the Nuggets rely on Jokić to be the engine of their offense. In the future,
+            I'd like to gather data for more games and compare Jokić's stats to see his usage compared to other opponents. One question we could ascertain with this type of analysis is if he is invovled
+            more or less in games against opponents of different league-standings. 
+            </p>
+    
+            <div class="w3-center">
+                <img src="../images/module2_images/network.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div> 
+            
+            <!-- Download Section -->
+            <strong>Data Download</strong>
+            <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
+                <ul>
+                    <li>The raw data from <code>playbyplay</code> endpoint the 2024 game 7 against the Timbewolves can be found <a href="../data/module2_data/playbyplay_record.csv" download>here</a>.</li>
+                    <li>And the cleaned version turned into transaction data: <a href="../data/playbyplay_transactions.csv" download>here</a>.</li>
+                    <li>The notebook used to perform this analysis: <a href="../notebooks/arm.ipynb" download>here</a>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+    <p>This analysis is done for the University of Colorado, Boulder, as part of the curriculum for CS 5612</p>
+    <p>Template provided <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>
