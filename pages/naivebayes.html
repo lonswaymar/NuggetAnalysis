@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
     <style>
         body, html {
             height: 100%;
@@ -37,31 +41,67 @@
 
             <!-- Section (a) Overview -->
             <h6><strong>Overview</strong></h6>
-            <p>Naive Bayes is a classification algorithm based on Bayes' Theorem. It assumes independence between predictors and computes the probability of each class given the input features. 
+            <p>Naive Bayes is a classification algorithm based on Bayes' Theorem. It assumes independence between predictors and computes the 
+            probability of each class given the input features. 
             The simplicity of the model allows it to work surprisingly well even with strong independence assumptions. The main flavors used here include:</p>
             <ul>
-                <li><strong>MultinomialNB</strong>: Best for count data, like word frequency or play frequency.</li>
-                <li><strong>BernoulliNB</strong>: Designed for binary/boolean features (0s and 1s).</li>
-                <li><strong>GaussianNB</strong>: Assumes features follow a normal distribution. Works well for continuous input.</li>
+                <li><strong>MultinomialNB</strong>: Best for count data, like word frequency accumulative basketball stats.</li>
+                <li><strong>BernoulliNB</strong>: Designed for binary. If feature engineering required, magnitude of data not considered.</li>
+                <li><strong>GaussianNB</strong>: Assumes features follow a normal distribution. Works well for continuous input like percentages of baskets made in a 
+                game.
+                </li>
+                <li><strong>CategoricalNB</strong>: Works on categorical features. Only non-numeric data is allowed.</li>
             </ul>
+            
+            <p>These flavors are an important to Naive Bayes modeling because traditional modeling can yield low probabilities when testing data sets
+            contain information poorly represent in the training data. Thus, each flavor implements a smoothing function over the training data such that
+            0's in the testing data don't completely tank the output probability predicted by the model. By smoothing over zeros in the input data, extremeties
+            are weighted less importantly. The importance of smoothing can be illustrated by looking at the expression for Bayes Theorem. It says that for a given
+            input vector \(\mathbf{x}\), the probability of a given classification \(c\) of all possible classifications \(C\) can be described as
+            
+            <p>
+                <p>
+                    \begin{align}
+                    P(c | \mathbf{x}) &\approx P(\mathbf{x} |c) \cdot P(c) \\
+                    &\approx P(X_1=x_1|C=c)P(X_2=x_2|C=c) \cdot ... P(X_n=x_n|C=c)
+                    
+                    \end{align}
+                </p>
+            </p>
+            
+            <p>\(X_n\) and \(x_n\) refer to the feature column and the input vector's value for that feature, respectively.
+            We can see that if a feature value of testing data vector \(\mathbf{x}\) is not represented in the training data, then one of the 
+            terms, for example \(P(X_1=x_1|C=c)\), will go to zero. This will cause the entire expression \(P(c | \mathbf{x}) \) to return zero as well. 
+            </p>
+            
+            <p>Overall, smoothing the data trades a hyper-realistic model for a more generalizable one that may still work well in practice
+            for most cases of the testing data. 
+            </p>
 
             <!-- Section (b) Data Prep -->
             <h6 class="w3-margin-top"><strong>Data Preparation</strong></h6>
-            <p>The dataset used for this section includes team performance stats at halftime (such as field goals made, rebounds, and fouls), along with label for win or loss. Each model variation used its own specially prepared dataset:
+            <p>The dataset used for this section all come from the cleaned data found on the regression tab. That data set combines data from the <code>LeageGameLog</code>
+            and <code>PlayByPlay</code> NBA API endpoints to create a list of stats of each team's performance at the halftime point of each game in the 2023-2024 season.
+            A snippet of this data (also shown on regression tab) is shown below. 
             </p>
-            <ul>
-                <li><code>multinomial_bayes_data.csv</code>: Raw counts of halftime stats per team</li>
-                <li><code>bernoulli_bayes_data.csv</code>: Binary 1/0 based on whether the stat diff is positive or not</li>
-                <li><code>gaussian_bayes_data.csv</code>: Team stats as a percentage of total game stats at the half</li>
-            </ul>
-            <p>Each version was used as input to the corresponding Naive Bayes classifier. Below is a preview of the raw input used for Bernoulli NB:</p>
-
-            <!-- Placeholder for HTML table if needed -->
+            
             <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
-                <table class="w3-table w3-bordered w3-small">
+                <table class="w3-table w3-bordered w3-small" style="overflow-x:auto;">
                     <thead>
                         <tr>
+                            <th>FIELD_GOAL_MADE</th>
+                            <th>FIELD_GOAL_MISSED</th>
+                            <th>FREE_THROW</th>
+                            <th>REBOUND</th>
+                            <th>TURNOVER</th>
+                            <th>FOUL</th>
+                            <th>VIOLATION</th>
+                            <th>SUBSTITUTION</th>
+                            <th>EJECTION</th>
                             <th>FIELD_GOAL_MADE_DIFF</th>
+                            <th>FIELD_GOAL_MISSED_DIFF</th>
+                            <th>FREE_THROW_DIFF</th>
+                            <th>REBOUND_DIFF</th>
                             <th>TURNOVER_DIFF</th>
                             <th>FOUL_DIFF</th>
                             <th>TEAM_NAME</th>
@@ -70,12 +110,140 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>0</td><td>1</td><td>Nuggets</td><td>0022301198</td><td>W</td></tr>
-                        <tr><td>0</td><td>1</td><td>0</td><td>Warriors</td><td>0022301198</td><td>L</td></tr>
-                        <!-- Add more rows as needed -->
+                        <tr>
+                            <td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td>
+                            <td>-4</td><td>17</td><td>-9</td><td>-9</td><td>-5</td><td>8</td><td>Warriors</td><td>22300062</td><td>L</td>
+                        </tr>
+                        <tr>
+                            <td>22</td><td>23</td><td>15</td><td>33</td><td>9</td><td>7</td><td>1</td><td>13</td><td>0</td>
+                            <td>4</td><td>-17</td><td>9</td><td>9</td><td>5</td><td>-8</td><td>Suns</td><td>22300062</td><td>W</td>
+                        </tr>
+                        <tr>
+                            <td>22</td><td>27</td><td>6</td><td>24</td><td>5</td><td>12</td><td>1</td><td>13</td><td>0</td>
+                            <td>-2</td><td>3</td><td>-5</td><td>0</td><td>0</td><td>9</td><td>Lakers</td><td>22300061</td><td>L</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
+            
+            <p>For each of the Bayes models implemented, a smaller dataset was constructed from this dataset to meet the requirements of the given flavor of Naive
+            Bayes model. 
+            </p>
+            <p>To begin, we can look at the multinomial Bayes dataset, which only uses positive count data. This requirement is perfect for accumulated stats
+            like total field goals made or missed. However, because I included columns in the original cleaned data above that denote the difference in stats For
+            the two teams in a game, I've omitted these for multinomial Bayesian modeling. The data set for multinomial bayes analysis is shown below.
+            </p>
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 1000px;">
+                <table class="w3-table w3-bordered w3-small w3-centered">
+                    <thead>
+                        <tr class="w3-light-grey">
+                            <th>FIELD_GOAL_MADE</th>
+                            <th>FIELD_GOAL_MISSED</th>
+                            <th>FREE_THROW</th>
+                            <th>REBOUND</th>
+                            <th>TURNOVER</th>
+                            <th>FOUL</th>
+                            <th>VIOLATION</th>
+                            <th>SUBSTITUTION</th>
+                            <th>EJECTION</th>
+                            <th>FGA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td><td>58</td></tr>
+                        <tr><td>22</td><td>23</td><td>15</td><td>33</td><td>9</td><td>7</td><td>1</td><td>13</td><td>0</td><td>45</td></tr>
+                        <tr><td>22</td><td>27</td><td>6</td><td>24</td><td>5</td><td>12</td><td>1</td><td>13</td><td>0</td><td>49</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Note that, because the columns storing stat differentials had to be removed, I created another feature for this dataset called <code>FGA</code> that
+            represents the total amount of field goal attempts a team has made for a given game. It is a simple sum of columns <code>FIELD_GOALS_MADE</code> and
+            <code>FIELD_GOALS_MISSED</code>. My hope was that this column might retain some of the information that the difference columns would have provided given that
+            it provides some modeling context to the number of goals made or missed relative to the total. Though Naive Bayes inherently assumes independence between feature
+            spaces, it may still group teams with high numbers in <code>FGA</code> and <code>FIELD_GOALS_MADE</code> as probable wins. Without the former, I hypothesize 
+            that the model would be less able to distinguish between teams that have made a lot of their shots or not. 
+            </p>
+            
+            <p> The second model, Bernoulli Naive Bayes, requires binary input. Thus, I used the subset of data that multinomial naive bayes dropped: the differential columns
+            in the clean data. These columns denote the  in-game stat differential for each team. Thus, if one team has made 3 more field goals than another, their values
+            in the <code>FIELD_GOALS_MADE_DIFF</code> column would be 3 and -3, respetively. To engineer this subset of columns to be appropriate for Bernoulli naive bayes, 
+            I assigned all positive values in the differential columns to 1 and all non-positive values to 0. The following feature space was transformed into a dataset represented
+            by this snippet:
+            </p>
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 1000px;">
+                <table class="w3-table w3-bordered w3-small w3-centered">
+                    <thead>
+                        <tr class="w3-light-grey">
+                            <th>FIELD_GOAL_MADE_DIFF</th>
+                            <th>FIELD_GOAL_MISSED_DIFF</th>
+                            <th>FREE_THROW_DIFF</th>
+                            <th>REBOUND_DIFF</th>
+                            <th>TURNOVER_DIFF</th>
+                            <th>FOUL_DIFF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                        <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+                        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Note that this transformation into binary feature space groups two modes of input data together. In the input data, there existed instances
+            of true 0's in the differential columns. For example, two teams in a game might have the same value of rebounds. Thus, the <code>REBOUND_DIFF</code>
+            column will contain a 0 for both teams in the dataset. This transformation groups true no-differnce stats with negative difference stats. In doing so,
+            this emphasizes the importance of a team with positive stats in a given metric.
+            </p>
+            <p>Lastly, it's worth noting that Bernoulli Naive Bayes inherently does not consider magnitude of the stats - it cannot - as it only uses 1's and 0's
+            to classify an outcome. Practically, this means that the algorithm treats a winning team with a huge value at <code>FIELD_GOALS_MADE_DIFF</code> the same
+            as a team with a smaller positive number. Thus, dominantly performing teams are grouped with teams that are barely maintaining a lead in a given category.
+            </p>
+            
+            <p>Gaussian Naive Bayes also required feature engineering. Gaussian naive bayes expects that the values of the feature space are normally distributed. Given 
+            that my data so far had been positive or negative count statistics, I decided to loop through my data once more to feature engineer the statistics into percentages.
+            More specifically, I calculated the total stats for a given category and updated the absolute values to represent the percentage they represent within the context of
+            a given game. In doing this, I only considered the absolute accumulated stats as it's nonsensical to create percentages of the the difference columns. Laslty, I 
+            removed <code>VIOLATIONS</code> and <code>EJECTION</code> since these two features yielded many divide-by-0 errors in games where these stats remained 0 for a given
+            team. This cleaned data set looks like:
+            </p>
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 1000px;">
+                <table class="w3-table w3-bordered w3-small w3-centered">
+                    <thead>
+                        <tr class="w3-light-grey">
+                            <th>FIELD_GOAL_MADE</th>
+                            <th>FIELD_GOAL_MISSED</th>
+                            <th>FREE_THROW</th>
+                            <th>REBOUND</th>
+                            <th>TURNOVER</th>
+                            <th>FOUL</th>
+                            <th>SUBSTITUTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0.450000</td><td>0.634921</td><td>0.285714</td><td>0.421053</td><td>0.307692</td><td>0.681818</td><td>0.518519</td></tr>
+                        <tr><td>0.550000</td><td>0.365079</td><td>0.714286</td><td>0.578947</td><td>0.692308</td><td>0.318182</td><td>0.481481</td></tr>
+                        <tr><td>0.478261</td><td>0.529412</td><td>0.352941</td><td>0.500000</td><td>0.500000</td><td>0.800000</td><td>0.541667</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>To assess if this percent transformation yield columns of normal distribution, I histogrammed each feature. Note that, in creating percentages of
+            stats made per game, each pair of teams in a game would return mirroring statistics. For example, if one team made 55% of field goals made, the others
+            team would have 45%. This pattern existed for all of the stats, thus, over all of the games processed, their became a symmetric effect in the histogram.
+            For every team that had 55% percent of a certain stat, there would be another team with 45% of a certain stat. This reality makes very symmetric distributions
+            as shown by the following histogram.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module3_images/histogram_field_goal_made.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div>
+            <p>Note that the distribution is not perfectly symmetric; that's product of the histogram binning. Also note that while the figure looks nicely distributed by eye, 
+            it would be more thorough in future analyses to fit the data with a Gaussian function to more concretely assess the data's suitability for Gaussian Naive Bayes.
+            Overall, I determine that this is a decent attempt at feature engineering a dataset for Gaussian Naive Bayes.
+            </p>
+            
+           
 
             <!-- Section (c) Code -->
             <h6 class="w3-margin-top"><strong>Code</strong></h6>
