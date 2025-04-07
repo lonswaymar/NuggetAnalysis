@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Naive Bayes - Nugget Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <style>
+        body, html {
+            height: 100%;
+            font-family: "Georgia", sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
+        <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
+        <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
+        <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
+        <div class="w3-col s2"><a href="regression.html" class="w3-button w3-block w3-black">Regression</a></div>
+        <div class="w3-col s2"><a href="naivebayes.html" class="w3-button w3-block w3-black">Naive Bayes</a></div>
+        <div class="w3-col s2"><a href="decisiontree.html" class="w3-button w3-block w3-black">Decision Tree</a></div>
+        <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-sand w3-grayscale w3-large">
+    <div class="w3-container" id="naivebayes" style="margin-top:75px;>
+        <div class="w3-content" style="max-width:900px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Naive Bayes</span></h5>
+
+            <!-- Section (a) Overview -->
+            <h6><strong>Overview</strong></h6>
+            <p>Naive Bayes is a classification algorithm based on Bayes' Theorem. It assumes independence between predictors and computes the probability of each class given the input features. 
+            The simplicity of the model allows it to work surprisingly well even with strong independence assumptions. The main flavors used here include:</p>
+            <ul>
+                <li><strong>MultinomialNB</strong>: Best for count data, like word frequency or play frequency.</li>
+                <li><strong>BernoulliNB</strong>: Designed for binary/boolean features (0s and 1s).</li>
+                <li><strong>GaussianNB</strong>: Assumes features follow a normal distribution. Works well for continuous input.</li>
+            </ul>
+
+            <!-- Section (b) Data Prep -->
+            <h6 class="w3-margin-top"><strong>Data Preparation</strong></h6>
+            <p>The dataset used for this section includes team performance stats at halftime (such as field goals made, rebounds, and fouls), along with label for win or loss. Each model variation used its own specially prepared dataset:
+            </p>
+            <ul>
+                <li><code>multinomial_bayes_data.csv</code>: Raw counts of halftime stats per team</li>
+                <li><code>bernoulli_bayes_data.csv</code>: Binary 1/0 based on whether the stat diff is positive or not</li>
+                <li><code>gaussian_bayes_data.csv</code>: Team stats as a percentage of total game stats at the half</li>
+            </ul>
+            <p>Each version was used as input to the corresponding Naive Bayes classifier. Below is a preview of the raw input used for Bernoulli NB:</p>
+
+            <!-- Placeholder for HTML table if needed -->
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>FIELD_GOAL_MADE_DIFF</th>
+                            <th>TURNOVER_DIFF</th>
+                            <th>FOUL_DIFF</th>
+                            <th>TEAM_NAME</th>
+                            <th>GAME_ID</th>
+                            <th>WL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>0</td><td>1</td><td>Nuggets</td><td>0022301198</td><td>W</td></tr>
+                        <tr><td>0</td><td>1</td><td>0</td><td>Warriors</td><td>0022301198</td><td>L</td></tr>
+                        <!-- Add more rows as needed -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section (c) Code -->
+            <h6 class="w3-margin-top"><strong>Code</strong></h6>
+            <p>All models were implemented in Python using <code>sklearn.naive_bayes</code>. The training set was split 80/20, and predictions were evaluated with accuracy and confusion matrices.</p>
+
+            <!-- Section (d) Results -->
+            <h6 class="w3-margin-top"><strong>Results</strong></h6>
+            <p>The figures below show the confusion matrices for each NB model:</p>
+
+            <div class="w3-center">
+                <img src="../images/module3_images/confusion_matrix_multinomialNB.png" class="w3-image" style="width:80%; max-width:800px;">
+                <p class="w3-small">MultinomialNB Confusion Matrix</p>
+            </div>
+
+            <div class="w3-center">
+                <img src="../images/module3_images/confusion_matrix_bernoulliNB.png" class="w3-image" style="width:80%; max-width:800px;">
+                <p class="w3-small">BernoulliNB Confusion Matrix</p>
+            </div>
+
+            <div class="w3-center">
+                <img src="../images/module3_images/confusion_matrix_gaussianNB.png" class="w3-image" style="width:80%; max-width:800px;">
+                <p class="w3-small">GaussianNB Confusion Matrix</p>
+            </div>
+
+            <!-- Section (e) Conclusions -->
+            <h6 class="w3-margin-top"><strong>Conclusions</strong></h6>
+            <p>All models performed reasonably well, but Bernoulli Naive Bayes outperformed the others slightly. This may be because the <code>_DIFF</code> features reflect relative performance between teams in the same game.
+            However, each model has limitations — Bernoulli ignores the degree of difference, and Gaussian assumptions don’t always hold. Still, the modeling was useful and revealed interesting correlations between halftime stats and eventual outcomes.</p>
+
+            <!-- Download Section -->
+            <strong>Download Section</strong>
+            <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
+                <ul>
+                    <li><a href="../data/module3_data/multinomial_bayes_data.csv" download>Multinomial Naive Bayes Dataset</a></li>
+                    <li><a href="../data/module3_data/bernoulli_bayes_data.csv" download>Bernoulli Naive Bayes Dataset</a></li>
+                    <li><a href="../data/module3_data/gaussian_bayes_data.csv" download>Gaussian Naive Bayes Dataset</a></li>
+                    <li><a href="../notebooks/nb_analysis.ipynb" download>Notebook for Naive Bayes Analysis</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+    <p>This analysis is done for the University of Colorado, Boulder, as part of the curriculum for CS 5612</p>
+    <p>Template provided <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>

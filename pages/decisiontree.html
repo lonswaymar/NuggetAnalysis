@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Decision Trees - Nugget Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <style>
+        body, html {
+            height: 100%;
+            font-family: "Georgia", sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
+        <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
+        <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
+        <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
+        <div class="w3-col s2"><a href="regression.html" class="w3-button w3-block w3-black">Regression</a></div>
+        <div class="w3-col s2"><a href="naivebayes.html" class="w3-button w3-block w3-black">Naive Bayes</a></div>
+        <div class="w3-col s2"><a href="decisiontree.html" class="w3-button w3-block w3-black">Decision Tree</a></div>
+        <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-sand w3-grayscale w3-large">
+    <div class="w3-container" id="decisiontrees" style="margin-top:75px;>
+        <div class="w3-content" style="max-width:900px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Decision Trees</span></h5>
+
+            <!-- Section (a) Overview -->
+            <h6><strong>Overview</strong></h6>
+            <p>Decision Trees (DTs) are flowchart-like structures where internal nodes represent tests on features, branches represent outcomes of these tests, and leaf nodes represent class labels. DTs are widely used for classification and regression due to their interpretability and low computational cost.</p>
+            <p>They use measures like GINI impurity and entropy to determine the "goodness" of a split. Below is an example tree visualization.</p>
+            <div class="w3-center">
+                <img src="../images/module3_images/all_features_tree.png" class="w3-image" style="width:100%; max-width:900px;">
+            </div>
+            <p>It is important to note that DTs can become quite complex and difficult to interpret if too many features are included. No two trees are exactly the same due to threshold variations and tie-breaking logic during the tree-building process.</p>
+
+            <!-- Section (b) Data Preparation -->
+            <h6 class="w3-margin-top"><strong>Data Preparation</strong></h6>
+            <p>The dataset used here consists of absolute and differential halftime stats across multiple NBA games. Non-numeric categorical features (e.g. team names) were excluded as sklearn's DTs cannot handle those directly. The following datasets were prepared for comparison:</p>
+            <ul>
+                <li>All Features Dataset: Includes all raw and difference features.</li>
+                <li>Only Diff Features: Includes only differential halftime stats.</li>
+                <li>Only Raw Features: Includes only raw halftime stats (no differences).</li>
+            </ul>
+
+            <!-- Section (c) Code -->
+            <h6 class="w3-margin-top"><strong>Code</strong></h6>
+            <p>Each dataset was used to fit a decision tree classifier. Accuracy was evaluated using an 80/20 train-test split across 100 simulations. The tree model was implemented using sklearn's <code>DecisionTreeClassifier</code>.</p>
+
+            <!-- Section (d) Results -->
+            <h6 class="w3-margin-top"><strong>Results</strong></h6>
+            <p>The confusion matrix for one of the trees is shown below:</p>
+            <div class="w3-center">
+                <img src="../images/module3_images/confusion_matrix_logistic_regression_all.png" class="w3-image" style="width:80%; max-width:800px;">
+            </div>
+
+            <p>Additional trees were generated with different root splits to demonstrate variety:</p>
+            <div class="w3-center">
+                <img src="../images/module3_images/diff_tree.png" class="w3-image" style="width:80%; max-width:800px;">
+            </div>
+            <div class="w3-center">
+                <img src="../images/module3_images/no_diff_tree.png" class="w3-image" style="width:80%; max-width:800px;">
+            </div>
+
+            <p>To quantify model performance, a simulation was run and box plots were created to compare accuracies for each dataset:</p>
+            <div class="w3-center">
+                <img src="../images/module3_images/box_plot_tree_sim.png" class="w3-image" style="width:100%; max-width:900px;">
+            </div>
+            <p>Results indicate that decision trees performed worse than logistic regression and Naive Bayes models on this task. However, they still offer valuable insight into how various stats contribute to game outcomes at halftime.</p>
+
+            <!-- Section (e) Conclusions -->
+            <h6 class="w3-margin-top"><strong>Conclusions</strong></h6>
+            <p>Decision Trees offer an interpretable but less accurate model for predicting outcomes based on halftime stats. While overfitting and inconsistent splits are concerns, DTs are still useful as an exploratory model. The "money" takeaway from this section is the visual insight into how a model splits data and how performance varies across feature sets.</p>
+
+            <!-- Download Section -->
+            <strong>Data & Code</strong>
+            <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
+                <ul>
+                    <li>All features dataset: <a href="../data/module3_data/cleaned_labeled_data.csv" download>Download</a></li>
+                    <li>Notebook used to run simulations and generate trees: <a href="../notebooks/module3_notebook.ipynb" download>Download</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+    <p>This analysis is done for the University of Colorado, Boulder, as part of the curriculum for CS 5612</p>
+    <p>Template provided <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>
