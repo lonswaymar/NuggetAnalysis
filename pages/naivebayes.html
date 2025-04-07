@@ -35,7 +35,7 @@
 
 <!-- Page Content -->
 <div class="w3-sand w3-grayscale w3-large">
-    <div class="w3-container" id="naivebayes" style="margin-top:75px;>
+    <div class="w3-container" id="naivebayes" style="margin-top:75px;">
         <div class="w3-content" style="max-width:900px">
             <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Naive Bayes</span></h5>
 
@@ -150,7 +150,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td><td>58</td></tr>
+                        <tr><td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td><td>58</td></tr>     
                         <tr><td>22</td><td>23</td><td>15</td><td>33</td><td>9</td><td>7</td><td>1</td><td>13</td><td>0</td><td>45</td></tr>
                         <tr><td>22</td><td>27</td><td>6</td><td>24</td><td>5</td><td>12</td><td>1</td><td>13</td><td>0</td><td>49</td></tr>
                     </tbody>
@@ -207,7 +207,7 @@
             removed <code>VIOLATIONS</code> and <code>EJECTION</code> since these two features yielded many divide-by-0 errors in games where these stats remained 0 for a given
             team. This cleaned data set looks like:
             </p>
-            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 1000px;">
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
                 <table class="w3-table w3-bordered w3-small w3-centered">
                     <thead>
                         <tr class="w3-light-grey">
@@ -248,6 +248,7 @@
             <!-- Section (c) Code -->
             <h6 class="w3-margin-top"><strong>Code</strong></h6>
             <p>All models were implemented in Python using <code>sklearn.naive_bayes</code>. The training set was split 80/20, and predictions were evaluated with accuracy and confusion matrices.</p>
+            <p>All code is linked at the bottom of the page.</p>
 
             <!-- Section (d) Results -->
             <h6 class="w3-margin-top"><strong>Results</strong></h6>
@@ -267,12 +268,55 @@
                 <img src="../images/module3_images/confusion_matrix_gaussianNB.png" class="w3-image" style="width:80%; max-width:800px;">
                 <p class="w3-small">GaussianNB Confusion Matrix</p>
             </div>
+            
+            <p>Finally, the table below shows the accuracy and error rate of each model</p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 800px;">
+                <table class="w3-table w3-bordered w3-small w3-centered">
+                    <thead>
+                        <tr class="w3-light-grey">
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Error Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Multinomial Naive Bayes</td>
+                            <td>0.682</td>
+                            <td>0.318</td>
+                        </tr>
+                        <tr>
+                            <td>Bernoulli Naive Bayes</td>
+                            <td>0.776</td>
+                            <td>0.224</td>
+                        </tr>
+                        <tr>
+                            <td>Gaussian Naive Bayes</td>
+                            <td>0.711</td>
+                            <td>0.289</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
 
             <!-- Section (e) Conclusions -->
             <h6 class="w3-margin-top"><strong>Conclusions</strong></h6>
-            <p>All models performed reasonably well, but Bernoulli Naive Bayes outperformed the others slightly. This may be because the <code>_DIFF</code> features reflect relative performance between teams in the same game.
-            However, each model has limitations — Bernoulli ignores the degree of difference, and Gaussian assumptions don’t always hold. Still, the modeling was useful and revealed interesting correlations between halftime stats and eventual outcomes.</p>
-
+            <p>All models performed reasonably well, with each being able to predict the outcome of a game with a greater than 2/3 chance.
+            However, the Bernoulli model performed the best at a 77% accuracy rate. This may be because the <code>_DIFF</code> features reflect relative performance between teams in the same game.
+            And, regardless of a team's relative performance over the other team in a given stat category, simplified binary criteria may prove the most predictive over the entire feature space. My theory
+            is that this simplified model actually removes much of the noise within the predicting variables by reducing reduntant variation in less important stats like number of substitutions. 
+            </p>
+            
+            <p>
+            Lastly, each model has limitations — multinomial methods excluded the relative difference stats, Bernoulli methods ignore magnitude of stats, and
+            Gaussian methods expect normal distributions - which in my data may be contrived due to the percent calculations described in the prior sections.
+            
+            
+            Ultimately, the modeling was useful and revealed that even the worst performing model can still predict the outcome of a game at halftime with greater than 2/3 odds.
+            </p>
+            
             <!-- Download Section -->
             <strong>Download Section</strong>
             <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
