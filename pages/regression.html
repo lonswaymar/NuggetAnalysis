@@ -69,6 +69,23 @@
                     $$
                 </p>
             </p>
+            
+            <p><strong>Note on logistic regression and maximum likelihood estimation</strong>.
+            Logistic regression works by utilizing the sigmoid function to transform the data into a pseudo-linear space. In the pseudo-linear space, a line of slope and intercept are 
+            fit to the transformed data. For this example, the model function is actually a line with slope and intecept because the independent variable is a 1-D decomposition of the feature
+            space. Much like linear regression, logistic regression can be performed with an unlimited amount of \(\beta \)features. In this case, there is still one intercept but each feature has its own coefficient per the 
+            expression below:
+            
+                <p style="text-align: center;">
+                    $$
+                    \hat{y} = \sigma(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n) = \frac{1}{1 + e^{-(\beta_0 + \sum_{i=1}^n \beta_i x_i)}}
+                    $$
+                </p>
+            
+            Finally, an algorithm like gradient descent is used to <strong>maximize the likelihood</strong> of each data point relative to its 
+            classification. That is, the slope of the line in the pseudo-linear space (and later transformed by the sigmoid function) is optimized when the y-axis odds of the sigmoid function 
+            are maximized for both classifications of data. This is not the case for linear regression, which uses the linear combination of the predictive feature matrix, \(X\) and label vector \(y \).
+            </p>
 
             <!-- (b) Dataset -->
             <h6 class="w3-margin-top"><strong>Dataset</strong></h6>
@@ -198,6 +215,10 @@
             <p>Note that the table above shows the complete cleaned and labeled dataset that forms the basis of all the other models in this tab and the subsequent two. 
             The labels were removed for all of the modeling. And the models were trained with 80% of the data and tested on the remainder. 
             </p>
+            <p>Splitting the data into a training and testing portion is paramount. The model mustn't be tested 
+            with data that it's already seen. This helps ensure the model isn't simply recognizing the same exact patterns it was trained on. Rather, it can now generalize to data beyond the training set.
+            An analogy is that student's shouldn't be tested over the problems they solved in their homework but rather, be tested upon different types of problems within the same subject domain.
+            </p>
 
             <p>To kick off the logistic regression, my first instinct was to be able to visualize the sigmoid function. But because the feature space of the data was so great, 
             I decided to apply principal component analysis to the data and plot the labels against it. A plot of the sigmoid function is shown below. 
@@ -213,22 +234,7 @@
                 <img src="../images/module3_images/WL_vs_pca.png" class="w3-image" style="width:100%; max-width:1000px;">
             </div>
             
-            <p><strong>Note on logistic regression and maximum likelihood estimation</strong>.
-            Logistic regression works by utilizing the sigmoid function to transform the data into a pseudo-linear space. In the pseudo-linear space, a line of slope and intercept are 
-            fit to the transformed data. For this example, the model function is actually a line with slope and intecept because the independent variable is a 1-D decomposition of the feature
-            space. However, logistic regression can be performed with an unlimited amount of features. In this case, there is still one intercept but each feature has its own coefficient per the 
-            expression below:
             
-                <p style="text-align: center;">
-                    $$
-                    \hat{y} = \sigma(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n) = \frac{1}{1 + e^{-(\beta_0 + \sum_{i=1}^n \beta_i x_i)}}
-                    $$
-                </p>
-            
-            Finally, an algorithm like gradient descent is used to <strong>maximize the likelihood</strong> of each data point relative to its 
-            classification. That is, the slope of the line in the pseudo-linear space (and later transformed by the sigmoid function) is optimized when the y-axis odds of the sigmoid function 
-            are maximized for both classifications of data. 
-            </p>
             
             <p>While using a 1-D decomposition of the data using principal component analysis was great for visualizing, it's worthwhile to compare its accuracy performance against a logistic
             regression model using the entire feature space. The next section shows the confusion matrices for each of these scenarios.

@@ -127,8 +127,14 @@
             </div>
             
             <p>For each of the Bayes models implemented, a smaller dataset was constructed from this dataset to meet the requirements of the given flavor of Naive
-            Bayes model. 
+            Bayes model. Note that all models were split into an 80:20 ratio for training and testing. 
             </p>
+            <p>Splitting the data into a training and testing portion is paramount. The model mustn't be tested 
+            with data that it's already seen. This helps ensure the model isn't simply recognizing the same exact patterns it was trained on. 
+            Rather, the model can now generalize to data beyond the training set.
+            An analogy is that student's shouldn't be tested over the problems they solved in their homework but rather, be tested upon different types of problems within the same subject domain.
+            </p>
+            
             <p>To begin, we can look at the multinomial Bayes dataset, which only uses positive count data. This requirement is perfect for accumulated stats
             like total field goals made or missed. However, because I included columns in the original cleaned data above that denote the difference in stats For
             the two teams in a game, I've omitted these for multinomial Bayesian modeling. The data set for multinomial bayes analysis is shown below.

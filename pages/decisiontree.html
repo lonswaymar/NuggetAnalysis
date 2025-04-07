@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
     <style>
         body, html {
             height: 100%;
@@ -31,40 +35,201 @@
 
 <!-- Page Content -->
 <div class="w3-sand w3-grayscale w3-large">
-    <div class="w3-container" id="decisiontrees" style="margin-top:75px;>
+    <div class="w3-container" id="decisiontrees" style="margin-top:75px;">
         <div class="w3-content" style="max-width:900px">
             <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Decision Trees</span></h5>
 
             <!-- Section (a) Overview -->
             <h6><strong>Overview</strong></h6>
-            <p>Decision Trees (DTs) are flowchart-like structures where internal nodes represent tests on features, branches represent outcomes of these tests, and leaf nodes represent class labels. DTs are widely used for classification and regression due to their interpretability and low computational cost.</p>
-            <p>They use measures like GINI impurity and entropy to determine the "goodness" of a split. Below is an example tree visualization.</p>
+            <p>Decision Trees are a supervised machine learning algorithm used for classification and regression tasks. 
+            They work by recursively splitting the data into branches based on feature thresholds that maximize some notion of "purity" in the resulting groups. 
+            Each node represents a decision based on one of the input features, and the final leaf nodes represent class predictions or continuous outputs.
+            </p>
+
+            <p>To determine the order of node splits (which are the features in the training dataset), decision trees rely on metrics that quantify how well 
+            a split separates the data. The most common metrics include:</p>
+            <ul>
+                <li><strong>Gini Impurity</strong>: Measures how often a randomly chosen element from the set would be incorrectly labeled. Lower values indicate more pure splits.</li>
+                <li><strong>Entropy</strong>: Based on information theory, it quantifies the uncertainty in a group. A perfectly pure split has entropy of 0.</li>
+                <li><strong>Information Gain</strong>: The reduction in entropy or impurity achieved after a split. A good split maximizes information gain.</li>
+            </ul>
+
+            <p>Entropy, for example, is a measurement of how mixed or impure a dataset is with respect to the target class. The formula for entropy is:</p>
+            <p style="text-align: center;">
+                \[
+                E = \sum_{i=1}^{n} -p_i \log_2 p_i
+                \]
+            </p>
+
+            <p>This formula expresses that, for a given set of labels, the entropy \(E\) quantifies how impure the distribution is. For instance, a node with a 50/50 class split has high entropy, while a node with all one class has zero entropy. The image below, adapted from Saed Sayad’s explanation of decision trees, shows the entropy calculation for a simple binary classification example.</p>
+
             <div class="w3-center">
-                <img src="../images/module3_images/all_features_tree.png" class="w3-image" style="width:100%; max-width:900px;">
+                <img src="../images/module3_images/saed.png" class="w3-image" style="width:100%; max-width:1000px;">
             </div>
-            <p>It is important to note that DTs can become quite complex and difficult to interpret if too many features are included. No two trees are exactly the same due to threshold variations and tie-breaking logic during the tree-building process.</p>
+
+            <p>Once we calculate entropy for the system before a split and for each possible split, we can measure the <em>information gain</em> from splitting on a particular feature:</p>
+            <p style="text-align: center;">
+                \[
+                \text{Information Gain} = E_{\text{parent}} - \sum_{k=1}^{K} \frac{n_k}{n} E_k
+                \]
+            </p>
+
+            <p>Here, \(E_{\text{parent}}\) is the entropy of the unsplit dataset, and the sum represents the weighted average entropy of the split groups (children nodes). The feature that produces the **greatest reduction** in entropy (i.e., the highest information gain) is selected for the next split — usually becoming the root node if it's the first split. Subsequent splits continue this logic recursively down the tree.</p>
+
+            
+            <p>Now suppose we split on a feature that results in two child nodes: one with 4 Wins and 1 Loss, and another with 2 Wins and 3 Losses. The weighted average entropy after the split is:
+            </p>
+
+            <p style="text-align: center;">
+                \( \text{Entropy}_{\text{after}} = \frac{5}{10} \cdot 0.722 + \frac{5}{10} \cdot 0.971 = 0.847 \)
+            </p>
+
+            <p>The information gain from this split is then:
+            </p>
+
+            <p style="text-align: center;">
+                \( \text{Information Gain} = 0.971 - 0.847 = 0.124 \)
+            </p>
+
+            <p>This tells us that the split improves the purity of the nodes by 0.124 bits, making it a relatively helpful split. This process continues recursively at each node, building the tree downward.</p>
+
+            <p>However, unless controlled, this recursive splitting can continue until every leaf node is pure — meaning it only contains one class. This leads to overfitting. Since there are many possible ways to split features (especially with continuous values), it’s generally possible to create an infinite number of trees that perfectly fit the training data but generalize poorly to new data.</p>
+
+            
+
 
             <!-- Section (b) Data Preparation -->
             <h6 class="w3-margin-top"><strong>Data Preparation</strong></h6>
-            <p>The dataset used here consists of absolute and differential halftime stats across multiple NBA games. Non-numeric categorical features (e.g. team names) were excluded as sklearn's DTs cannot handle those directly. The following datasets were prepared for comparison:</p>
-            <ul>
-                <li>All Features Dataset: Includes all raw and difference features.</li>
-                <li>Only Diff Features: Includes only differential halftime stats.</li>
-                <li>Only Raw Features: Includes only raw halftime stats (no differences).</li>
-            </ul>
+            <p>The dataset used for this section all come from the cleaned data found on the regression tab. That data set combines data from the <code>LeageGameLog</code>
+            and <code>PlayByPlay</code> NBA API endpoints to create a list of stats of each team's performance at the halftime point of each game in the 2023-2024 season.
+            A snippet of this data (also shown on regression tab) is shown below. 
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small" style="overflow-x:auto;">
+                    <thead>
+                        <tr>
+                            <th>FIELD_GOAL_MADE</th>
+                            <th>FIELD_GOAL_MISSED</th>
+                            <th>FREE_THROW</th>
+                            <th>REBOUND</th>
+                            <th>TURNOVER</th>
+                            <th>FOUL</th>
+                            <th>VIOLATION</th>
+                            <th>SUBSTITUTION</th>
+                            <th>EJECTION</th>
+                            <th>FIELD_GOAL_MADE_DIFF</th>
+                            <th>FIELD_GOAL_MISSED_DIFF</th>
+                            <th>FREE_THROW_DIFF</th>
+                            <th>REBOUND_DIFF</th>
+                            <th>TURNOVER_DIFF</th>
+                            <th>FOUL_DIFF</th>
+                            <th>TEAM_NAME</th>
+                            <th>GAME_ID</th>
+                            <th>WL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td>
+                            <td>-4</td><td>17</td><td>-9</td><td>-9</td><td>-5</td><td>8</td><td>Warriors</td><td>22300062</td><td>L</td>
+                        </tr>
+                        <tr>
+                            <td>22</td><td>23</td><td>15</td><td>33</td><td>9</td><td>7</td><td>1</td><td>13</td><td>0</td>
+                            <td>4</td><td>-17</td><td>9</td><td>9</td><td>5</td><td>-8</td><td>Suns</td><td>22300062</td><td>W</td>
+                        </tr>
+                        <tr>
+                            <td>22</td><td>27</td><td>6</td><td>24</td><td>5</td><td>12</td><td>1</td><td>13</td><td>0</td>
+                            <td>-2</td><td>3</td><td>-5</td><td>0</td><td>0</td><td>9</td><td>Lakers</td><td>22300061</td><td>L</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>In order to create three unique trees, I decided to split the data into three different categories:
+                <ul>
+                    <li>All data is used.</li>
+                    <li>Only columns <em>without</em> DIFF in them are used. These are the <em>absolute</em> values of each metric recorded in the original table.</li>
+                    <li>Only columns <em>with</em> DIFF in them are used. These are the <em>relative</em> values of each metric recorded in the original table. These values are relative to the game in which they've been recorded.</li>
+                </ul>
+            </p>
+            <p>The original cleaned dataset used for the first tree is shown above. The following two tables represent the datasets used for the two subsequent trees. The first one is used for the 
+            difference columns, as indicated by the column names having DIFF in them.
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 1000px;">
+                <table class="w3-table w3-bordered w3-small w3-centered">
+                    <thead>
+                        <tr class="w3-light-grey">
+                            <th>FIELD_GOAL_MADE_DIFF</th>
+                            <th>FIELD_GOAL_MISSED_DIFF</th>
+                            <th>FREE_THROW_DIFF</th>
+                            <th>REBOUND_DIFF</th>
+                            <th>TURNOVER_DIFF</th>
+                            <th>FOUL_DIFF</th>
+                            <th>WL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>-4</td><td>17</td><td>-9</td><td>-9</td><td>-5</td><td>8</td><td>L</td></tr>
+                        <tr><td>4</td><td>-17</td><td>9</td><td>9</td><td>5</td><td>-8</td><td>W</td></tr>
+                        <tr><td>-2</td><td>3</td><td>-5</td><td>0</td><td>0</td><td>9</td><td>L</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>The final dataset used for this tab is shown below and contains all of the absolute value stats (no relative difference stats).
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 1000px;">
+                <table class="w3-table w3-bordered w3-small w3-centered">
+                    <thead>
+                        <tr class="w3-light-grey">
+                            <th>FIELD_GOAL_MADE</th>
+                            <th>FIELD_GOAL_MISSED</th>
+                            <th>FREE_THROW</th>
+                            <th>REBOUND</th>
+                            <th>TURNOVER</th>
+                            <th>FOUL</th>
+                            <th>VIOLATION</th>
+                            <th>SUBSTITUTION</th>
+                            <th>EJECTION</th>
+                            <th>GAME_ID</th>
+                            <th>WL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td><td>22300062</td><td>L</td></tr>
+                        <tr><td>22</td><td>23</td><td>15</td><td>33</td><td>9</td><td>7</td><td>1</td><td>13</td><td>0</td><td>22300062</td><td>W</td></tr>
+                        <tr><td>22</td><td>27</td><td>6</td><td>24</td><td>5</td><td>12</td><td>1</td><td>13</td><td>0</td><td>22300061</td><td>L</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+
 
             <!-- Section (c) Code -->
             <h6 class="w3-margin-top"><strong>Code</strong></h6>
-            <p>Each dataset was used to fit a decision tree classifier. Accuracy was evaluated using an 80/20 train-test split across 100 simulations. The tree model was implemented using sklearn's <code>DecisionTreeClassifier</code>.</p>
+            <p>Each dataset was used to fit a decision tree classifier. Accuracy was evaluated using an 80/20 train-test split across 100 simulations. 
+            The tree model was implemented using sklearn's <code>DecisionTreeClassifier</code>.</p>
 
             <!-- Section (d) Results -->
             <h6 class="w3-margin-top"><strong>Results</strong></h6>
-            <p>The confusion matrix for one of the trees is shown below:</p>
-            <div class="w3-center">
-                <img src="../images/module3_images/confusion_matrix_logistic_regression_all.png" class="w3-image" style="width:80%; max-width:800px;">
-            </div>
+            
+            
 
-            <p>Additional trees were generated with different root splits to demonstrate variety:</p>
+            <p>The three following trees represent trees created from each of the three subsets of data. Note that their root nodes are all different. 
+            For each tree, the given root node represents the feature in their respective dataset that initially reduced the most entropy in the system. 
+            </p>
+            
+            <p>Also, note that for sake of visualization, these trees only represent 20 rows of data. More rows of data clutter the branches and nodes and make
+            poor visualizations. Nonetheless, these are the trees produced for each dataset and a more insightful simulation is shown below that reveals performance of
+            each full tree on each full dataset.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module3_images/all_features_tree.png" class="w3-image" style="width:80%; max-width:800px;">
+            </div>
             <div class="w3-center">
                 <img src="../images/module3_images/diff_tree.png" class="w3-image" style="width:80%; max-width:800px;">
             </div>
@@ -72,15 +237,38 @@
                 <img src="../images/module3_images/no_diff_tree.png" class="w3-image" style="width:80%; max-width:800px;">
             </div>
 
-            <p>To quantify model performance, a simulation was run and box plots were created to compare accuracies for each dataset:</p>
+            <p>As noted before the trees, the illustrations of the trees were only created using 20 instances of data. This helped produce nice visualizations
+            of the trees for each dataset and verifies that they're using different feature space to construct the nodes. However, in order to discern to utility of
+            the decision trees for each dataset, I decided to run a simulation that calculates predictive accuracy of each model.
+            </p>
+            
+            <p>To begin, I manually split the data into training and testing portions. Per usual I used an 80:20 split consistent with all of my supervised models. A note on 
+            the importance of disjointing the data into these portions is shown in my the data preparation section. Anyway, I grabbed 80% of the indices of the original dataframe 
+            and allocated them for training each model. I then created the two additional subsets of data (outlined above) and created their unique testing and training subsets. Then,
+            I created three decision tree classifiers and trained and tested the models. Finally I saved the accuracy of each model over 900 iterations. Each iteration used a uniquely randomized
+            split of training and testing data.
+            </p>
+            
+            <p>The results of the simulation are shown in a boxplot below.
+            </p>
+            
             <div class="w3-center">
                 <img src="../images/module3_images/box_plot_tree_sim.png" class="w3-image" style="width:100%; max-width:900px;">
             </div>
-            <p>Results indicate that decision trees performed worse than logistic regression and Naive Bayes models on this task. However, they still offer valuable insight into how various stats contribute to game outcomes at halftime.</p>
+
+            <p>Much like the performance of the Bernoulli model in the Naive Bayes tab, the decision tree that performed the best was the one that used only the difference columns for data.
+            This simulation produced distributions of accuracies similar in deviation for each model, but the DIFF model had a higher mean accuracy than the others. I believe this is because
+            the DIFF columns represent the in game statistics as opposed to absolute statistics. More meaningfully, the DIFF statistics measure how well a team is playing compared to the exact 
+            other team in that game. These measurements ignore all other teams' stats.
+            </p>
 
             <!-- Section (e) Conclusions -->
             <h6 class="w3-margin-top"><strong>Conclusions</strong></h6>
-            <p>Decision Trees offer an interpretable but less accurate model for predicting outcomes based on halftime stats. While overfitting and inconsistent splits are concerns, DTs are still useful as an exploratory model. The "money" takeaway from this section is the visual insight into how a model splits data and how performance varies across feature sets.</p>
+            <p>Decision Trees provide a flexible, interpretable approach to classification. In this analysis, they revealed how different feature sets — absolute stats, difference stats, and all combined —
+            guide the model toward different splits and predictive outcomes. While the full dataset offers a broader scope, the difference-based model consistently performed best, likely because it directly 
+            reflects in-game dominance rather than overall accumulation. These insights reinforce the value of thoughtful feature engineering and show how decision trees can surface meaningful structure 
+            in sports performance data, even with their susceptibility to overfitting.</p>
+
 
             <!-- Download Section -->
             <strong>Data & Code</strong>
