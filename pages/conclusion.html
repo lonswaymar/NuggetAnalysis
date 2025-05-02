@@ -42,40 +42,46 @@
             <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Conclusions</span></h5>
 
             <p>
-            The NBA isn’t just a basketball league — it’s one of the biggest leagues in global sports. With players from over 40 countries and some of the highest-profile athletes on the planet, 
-            it blends fast-paced entertainment with tremendous data acquisition. Between the MVPs like Jokic, Embiid, and Giannis, and the analysts who break down every possession, 
+            The National Basketball association is one of the biggest leagues in global sports. With players from over 40 countries and some of the highest-profile athletes on the planet, 
+            it blends exciting entertainment with tremendous data acquisition. Between the MVPs like Jokic, Embiid, and Giannis, and the analysts who break down every possession, 
             there’s no shortage of ways to analyze and appreciate the sport.
-            This project was my attempt to dig into this data - to take the fun parts of basketball and understand them at a mathematical level.
+            This project attempts to dig into this data - to take the crunchy, analytical parts of basketball and understand them at a closer level.
             </p>
 
             <p>
-            Naturally, I focused on the Nuggets — recent NBA champions and my local team. And with two MVPs in Jokic and Westbrook now on the same roster, it felt like a perfect time to analyze
+            At the beginning, the analysis focused on the Nuggets — recent NBA champions home to Denver, Colorado. And with two MVPs in Jokic and Westbrook now on the same roster, the current season's data could have been
+            ripe for analyzing
             what separates all-time greats 
-            from everyday players. However, much of my analysis showed that it was largely time that separated these players from the regulars. But maybe the best intpretation is that the best players simply just play in 
-            the league longer, whereas average players leave sooner for other leagues or retirement. From here,
-            I wanted to understand whether bench players are actually that different from starters, what makes lineups click, and if it’s even possible to predict a game’s outcome 
+            from everyday players. However, much of my analysis showed that it was largely time that separated these players from the regulars. Noting, however, that,
+            even after an athlete passes their prime in their scoring potential, the analyses show that the best athletes like Westbrook can still contribute as a play-maker in generating assists and rebounds - thus, 
+            elongating their careers.  From here,
+            I the analysis studied whether bench players are actually that different from starters, what makes lineups click, and if it’s even possible to predict a game’s outcome 
             based on halftime stats alone.
             </p>
 
             <p>
-            Looking into player roles, I came away surprised. Some bench players are nearly as productive as starters when you account for minutes played. It’s made me rethink the whole bench/starter divide — and wonder if 
-            coaches are undervaluing some guys who quietly put in serious work. The concern here is if efficient bench players, that look like starters in their stats when normalized by minutes, could actually scale up to be
-            successful for the entire game. Coaches could explore this by playing bench players in longer minutes during the regular season. 
+            Next, players roles betweeen bench and starting line ups were compared. Some bench players were seen to be nearly as productive as starters when you account for minutes played. 
+            This finding suggests that some bench players are undervalued. Some starters are overvalued. Coaches may do well to give more minutes to bench players. However team politics involving player contracts might
+            dilude coaching efforts through the sunk cost falacy - that is - coaches will play players getting paid way more, even if they're not significantly better than other players on the team. 
+            This raises the concern, however, that bench players that look like starters when their stats are normalized by minutes, might not be able to scale their abilities through an entire game.
+            Coaches could explore this by playing bench players in longer minutes during the regular season and fighting the stigma that just because a player has been paid well, they deserve to play the most minutes.
+            If many coaches did this, it might make contracts in the NBA more equitable across entire rosters. This could provide more room for managers to make the decision for what players to add to the team.
             </p>
 
             <p>
-            As for chemistry between players? This was revealed with the associated rule mining. You hear fans talk about duos like Jokic and Gordon having great on-court synergy (peep the dunk in the last image), 
-            and now I've been able to verify this by looking at play-play-data as itemsets. We can reveal when players are having success based on who else is on the court and what types of plays are drawn up.
-            It makes sense that coaching decisions should lean on that, not just raw scoring stats. The right combination of players, shot selections, while accounting for on-court defense can make the difference of
+            Chemistry between players and for certain plays was revealed with the associated rule mining. Common discourse involves players like Jokic and Gordon having great on-court synergy 
+            (peep the dunk in the last image) - this analysis shows that some of that is certainly true. We can reveal when players are having success based on who else is on the court and what types of plays are drawn up.
+            Coaching decisions should lean on these relationships to optimize their chance of winning a game. The right combination of players, shot selections, while accounting for on-court defense can make the difference of
             aggregate plays over a longer game or series. 
             </p>
 
             <p>
-            Trying to predict the winner of a game with only half time stats was perhaps the most interesting study in this research. However, it turns out that simply looking at the stat differentials
+            Finally the analysis addresses whether or not the in-game statistics till half-time can predict a win or loss. However, it turns out that simply looking at the stat differentials
             between the two teams at halftime was quite predictive in determing which team wins. Teams that led in rebounds, avoided turnovers, and shot efficiently by halftime had 
-            a pretty solid edge. While these models excluded information like team standings, injury status, or ANY outside statistics not accumulated in that game, I guess it's not all that suprising that the models
+            performed well. While these models excluded information like team standings, injury status, or ANY outside statistics not accumulated in that game, it is not suprising that the models
             predicted that teams with large positive point differentials at half time are likely to win the game. While this wasn't a guarantee, the differential stats provded quite predictive. 
-            And considering how esteemed certain teams become throughout the season, it's important to know that what matter's significantly is simply the in-game stats. This finding might allow players to cut through
+            And considering how esteemed certain teams become throughout the season, the results show that in-game stats may be more important than the presence of legacy players, a team's standing, or any fan's discourse. 
+            This finding might allow players to cut through
             the noise and narrative surrounding a specific match up and let the players focus on executing well. 
             </p>
 
@@ -85,10 +91,14 @@
             </div>
 
             <p>
-            Ultimately, this project engrained in me a deeper appreciation for the features not shown in the box score. MVPs don’t just rack up stats — they move differently and contribute in many ways on the court, althewhile 
-            limited to decline with age, as shown with Westbrook's career statistics. Meanwhile, so-called role players might be one rotation tweak away from making a major impact. There’s value in asking these 
-            kinds of questions, even if the answers don’t always land cleanly. Understanding these trends can importantly inform coaches and managers to rest certain players, trust others to spend more time on the court, and help
-            build championship level teams with what players they have available for hire. In essense, this portion of the analysis can help team staff recognize and uplift players with underappreciated talent. In doing so,
+            To address the reader personally, this project engrained in me a deeper appreciation for the features not shown in the box score. MVPs don’t just score points — they dominate the court
+            and find ways to contribute when one of their abilities is lacking for a given night. While even the best are 
+            limited to decline with age, as shown with Westbrook's career statistics, his rebounds and assists have made him an important play maker for Denver. Meanwhile, so-called role players might be one rotation 
+            tweak away from making a major impact. There’s value in asking these 
+            kinds of questions, even if the answers don’t always land and provide coaching risk for new rotations. 
+            Understanding these trends can importantly inform coaches and managers to rest certain players, trust others to spend more time on the court, and help
+            build championship level teams with what players they have available for hire. This portion of the analysis can help team staff 
+            recognize and uplift players with underappreciated talent. In doing so,
             it would allow starters and star players more rest and mitigate injuries. This allows for a balanced team, and overall, a more enjoyable sport to watch and play. 
             </p>
             
