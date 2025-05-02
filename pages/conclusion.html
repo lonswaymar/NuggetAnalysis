@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Clustering - Nugget Analysis</title>
+    <title>Naive Bayes - Nugget Analysis</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
     <style>
         body, html {
-          height: 100%;
-          font-family: "Georgia", sans-serif;
+            height: 100%;
+            font-family: "Georgia", sans-serif;
         }
     </style>
 </head>
@@ -30,3 +34,80 @@
         <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
     </div>
 </div>
+
+<!-- Page Content -->
+<div class="w3-sand w3-grayscale w3-large">
+    <div class="w3-container" id="naivebayes" style="margin-top:75px;">
+        <div class="w3-content" style="max-width:900px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Conclusions</span></h5>
+
+            <p>
+            The NBA isn’t just a basketball league — it’s one of the biggest leagues in global sports. With players from over 40 countries and some of the highest-profile athletes on the planet, 
+            it blends fast-paced entertainment with tremendous data acquisition. Between the MVPs like Jokic, Embiid, and Giannis, and the analysts who break down every possession, 
+            there’s no shortage of ways to analyze and appreciate the sport.
+            This project was my attempt to dig into this data - to take the fun parts of basketball and understand them at a mathematical level.
+            </p>
+
+            <p>
+            Naturally, I focused on the Nuggets — recent NBA champions and my local team. And with two MVPs in Jokic and Westbrook now on the same roster, it felt like a perfect time to analyze
+            what separates all-time greats 
+            from everyday players. However, much of my analysis showed that it was largely time that separated these players from the regulars. But maybe the best intpretation is that the best players simply just play in 
+            the league longer, whereas average players leave sooner for other leagues or retirement. From here,
+            I wanted to understand whether bench players are actually that different from starters, what makes lineups click, and if it’s even possible to predict a game’s outcome 
+            based on halftime stats alone.
+            </p>
+
+            <p>
+            Looking into player roles, I came away surprised. Some bench players are nearly as productive as starters when you account for minutes played. It’s made me rethink the whole bench/starter divide — and wonder if 
+            coaches are undervaluing some guys who quietly put in serious work. The concern here is if efficient bench players, that look like starters in their stats when normalized by minutes, could actually scale up to be
+            successful for the entire game. Coaches could explore this by playing bench players in longer minutes during the regular season. 
+            </p>
+
+            <p>
+            As for chemistry between players? This was revealed with the associated rule mining. You hear fans talk about duos like Jokic and Gordon having great on-court synergy (peep the dunk in the last image), 
+            and now I've been able to verify this by looking at play-play-data as itemsets. We can reveal when players are having success based on who else is on the court and what types of plays are drawn up.
+            It makes sense that coaching decisions should lean on that, not just raw scoring stats. The right combination of players, shot selections, while accounting for on-court defense can make the difference of
+            aggregate plays over a longer game or series. 
+            </p>
+
+            <p>
+            Trying to predict the winner of a game with only half time stats was perhaps the most interesting study in this research. However, it turns out that simply looking at the stat differentials
+            between the two teams at halftime was quite predictive in determing which team wins. Teams that led in rebounds, avoided turnovers, and shot efficiently by halftime had 
+            a pretty solid edge. While these models excluded information like team standings, injury status, or ANY outside statistics not accumulated in that game, I guess it's not all that suprising that the models
+            predicted that teams with large positive point differentials at half time are likely to win the game. While this wasn't a guarantee, the differential stats provded quite predictive. 
+            And considering how esteemed certain teams become throughout the season, it's important to know that what matter's significantly is simply the in-game stats. This finding might allow players to cut through
+            the noise and narrative surrounding a specific match up and let the players focus on executing well. 
+            </p>
+
+            <div class="w3-center">
+                <img src="../images/module4_images/bench.webp" class="w3-image" style="width:80%; max-width:700px;">
+                
+            </div>
+
+            <p>
+            Ultimately, this project engrained in me a deeper appreciation for the features not shown in the box score. MVPs don’t just rack up stats — they move differently and contribute in many ways on the court, althewhile 
+            limited to decline with age, as shown with Westbrook's career statistics. Meanwhile, so-called role players might be one rotation tweak away from making a major impact. There’s value in asking these 
+            kinds of questions, even if the answers don’t always land cleanly. Understanding these trends can importantly inform coaches and managers to rest certain players, trust others to spend more time on the court, and help
+            build championship level teams with what players they have available for hire. In essense, this portion of the analysis can help team staff recognize and uplift players with underappreciated talent. In doing so,
+            it would allow starters and star players more rest and mitigate injuries. This allows for a balanced team, and overall, a more enjoyable sport to watch and play. 
+            </p>
+            
+
+            <div class="w3-center">
+                <img src="../images/module4_images/dunk.avif" class="w3-image" style="width:80%; max-width:700px;">
+                <p class="w3-small">Hopefully this analysis was a slam dunk.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+    <p>This analysis is done for the University of Colorado, Boulder, as part of the curriculum for CS 5612</p>
+    <p>Template provided <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>
