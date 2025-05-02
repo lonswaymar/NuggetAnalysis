@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Regression - Nugget Analysis</title>
+    <title>Ensembles - Nugget Analysis</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -12,8 +12,8 @@
     </script>
     <style>
         body, html {
-            height: 100%;
-            font-family: "Georgia", sans-serif;
+          height: 100%;
+          font-family: "Georgia", sans-serif;
         }
     </style>
 </head>
@@ -38,58 +38,50 @@
 <!-- Page Content -->
 <div class="w3-sand w3-grayscale w3-large">
     <div class="w3-container" id="regression" style="margin-top:75px;">
->
+
         <div class="w3-content" style="max-width:1400px">
-            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Regression Analysis</span></h5>
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Ensembles and Random Forest</span></h5>
 
-            <!-- (a) Logistic Regression Overview -->
+            <!-- Ensembles overview -->
             <h6><strong>Overview</strong></h6>
-            <p>Logistic regression is used for binary classification problems. It models the probability of a binary outcome using a logistic (sigmoid) function. 
-            The logit model predicts the likelihood that a given input belongs to a certain class (e.g., win vs. loss).
-            </p>
-            <p>This makes logistic regression a great model for predicting whether or not a basketball team will win a given game.
-            While most models like to look at historical or season data to predict the outcome of a game, I've chosed to look at halftime statistics for every game of the 2023-2024 season.
-            I wonder if simply a teams' statistics accumulated halfway through a basketball game can predict whether a team would win the game. 
-            No historical data or full game results were included to keep the model focused solely on performance up to halftime.
-            </p>
-            
-            <p>Linear regression, while not used in this analysis, looks to regress data by fitting the dependent variable to the predictor variables with the expression
-                <p style="text-align: center;">
-                    $$
-                    \hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n
-                    $$
-                </p>
-            </p>
-            
-            <p>The coefficients used to multiply each predictor variable are calculated by taking the partial derivative of the sum of squared residuals with respect to the given parameter coefficient.
-            </p>
-            
-            <p>More succinctly written, however, the matrix for the best fit parameters can be found by solving
-                <p style="text-align: center;">
-                    $$
-                    \hat{\beta} = (X^TX)^{-1}X^Ty
-                    $$
-                </p>
-            </p>
-            
-            <p><strong>Note on logistic regression and maximum likelihood estimation</strong>.
-            Logistic regression works by utilizing the sigmoid function to transform the data into a pseudo-linear space. In the pseudo-linear space, a line of slope and intercept are 
-            fit to the transformed data. For this example, the model function is actually a line with slope and intecept because the independent variable is a 1-D decomposition of the feature
-            space. Much like linear regression, logistic regression can be performed with an unlimited amount of \(\beta \)features. In this case, there is still one intercept but each feature has its own coefficient per the 
-            expression below:
-            
-                <p style="text-align: center;">
-                    $$
-                    \hat{y} = \sigma(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n) = \frac{1}{1 + e^{-(\beta_0 + \sum_{i=1}^n \beta_i x_i)}}
-                    $$
-                </p>
-            
-            Finally, an algorithm like gradient descent is used to <strong>maximize the likelihood</strong> of each data point relative to its 
-            classification. That is, the slope of the line in the pseudo-linear space (and later transformed by the sigmoid function) is optimized when the y-axis odds of the sigmoid function 
-            are maximized for both classifications of data. This is not the case for linear regression, which uses the linear combination of the predictive feature matrix, \(X\) and label vector \(y \).
+            <p>
+            Ensemble learning combines the predictions of many individual models to produce a result that's more accurate than any one of those models alone. Instead of trusting a single model 
+            to get everything right, an ensemble relies on the collective trends to make better decisions. This idea plays out in a few main ways, each of which uses multiple models in a 
+            slightly different way.
             </p>
 
-            <!-- (b) Dataset -->
+            
+
+            <p>
+            The three most common ensemble techniques are <strong>bagging</strong>, <strong>boosting</strong>, and <strong>stacking</strong>. 
+            Bagging creates many versions of a model by randomly sampling the data (with replacement) and training each version independently. Random forest is an example of 
+            bagging since it uses many decision trees. I'll expand on this one further below. 
+            Boosting, oppositely, trains models sequentially — each new model focuses on correcting the errors of the one before it. 
+            Lastly, stacking takes a collection of models and trains a final model on their outputs to make the final prediction. All three approaches 
+            aim to improve accuracy.
+            </p>
+            
+            <div class="w3-center">
+                <img src="../images/module4_images/bagging-boosting-stacking.webp" class="w3-image" style="width:100%; max-width:900px;">
+                <p class="w3-small">Infographic showing three common ensemble types: bagging, boosting, and stacking.</p>
+            </div>
+
+            <p>
+            The ensemble method I used here is the <strong>Random Forest</strong>, which is based on <strong>bagging</strong> as I said above. 
+            It builds many decision trees, each trained on a different random subset of the training data and features. 
+            At prediction time, the test vector goes through all of the trees. The final prediction is the mode of the outcomes of all the trees. Often times, people refer to this
+            as "voting".
+            The goal is for random forests to reduce overfitting. It should help smooth out the inconsistencies of any single decision tree.
+            </p>
+
+            <p>
+            Later on this page, you can see that I used a Random Forest classifier to predict whether a basketball team would win or lose a game based on their halftime statistics. 
+            While a single decision tree might latch onto a few unhelpful features or noisy trends, a full forest helps mitigate that by 
+            averaging across many trees! But for now, here is information on the data used in this analysis.
+            </p>
+
+
+            <!-- Dataset -->
             <h6 class="w3-margin-top"><strong>Dataset</strong></h6>
             <p>The dataset for this tab was uniquely constructed using two endpoints from the NBA API. The first endpoint, <code>LeagueGameLog</code>, allowed me to get the 
             win/loss labels for every game in the 2023-2024 season. A snippet from this endpoint is shown below.
@@ -217,136 +209,62 @@
             <p>Note that the table above shows the complete cleaned and labeled dataset that forms the basis of all the other models in this tab and the subsequent two. 
             The labels were removed for all of the modeling. And the models were trained with 80% of the data and tested on the remainder. 
             </p>
+            <h6><strong>Train Test Split</strong></h6>
             <p>Splitting the data into a training and testing portion is paramount. The model mustn't be tested 
             with data that it's already seen. This helps ensure the model isn't simply recognizing the same exact patterns it was trained on. Rather, it can now generalize to data beyond the training set.
             An analogy is that student's shouldn't be tested over the problems they solved in their homework but rather, be tested upon different types of problems within the same subject domain.
+            I've shown the testing and training portions of the PCA transformed data below:
             </p>
-
-            <p>To kick off the logistic regression, my first instinct was to be able to visualize the sigmoid function. But because the feature space of the data was so great, 
-            I decided to apply principal component analysis to the data and plot the labels against it. A plot of the sigmoid function is shown below. 
-            </p>
+            
+            <div class="w3-center">
+                <p>Testing Data</p>
+                <img src="../images/module4_images/test_data.png" class="w3-image" style="width:60%;">
+            </div>
+            
+            <div class="w3-center">
+                <p>Training Data</p>
+                <img src="../images/module4_images/train_data.png" class="w3-image" style="width:60%;">
+            </div>
 
            
 
-            <!-- (c) PCA & Visualization -->
-            <h6 class="w3-margin-top"><strong>Logistic Regression with PCA</strong></h6>
-            <p>PCA was used to reduce the dimensionality of the data to a single feature, allowing a clear visualization of the logistic regression decision boundary. The following plot shows the sigmoid curve fitted to the PCA-transformed feature and binary win/loss outcome:</p>
+            <!-- Confusion Matrix -->
+            <h6 class="w3-margin-top"><strong>Random Forest Implemetation</strong></h6>
+            
 
             <div class="w3-center">
-                <img src="../images/module3_images/WL_vs_pca.png" class="w3-image" style="width:100%; max-width:1000px;">
+                <img src="../images/module4_images/confusion_matrix_random_forest.png" class="w3-image" style="width:60%; max-width:1000px;">
             </div>
-            
-            
-            
-            <p>While using a 1-D decomposition of the data using principal component analysis was great for visualizing, it's worthwhile to compare its accuracy performance against a logistic
-            regression model using the entire feature space. The next section shows the confusion matrices for each of these scenarios.
-            </p>
-            
-            <!-- (d) Confusion Matrices -->
-            <h6 class="w3-margin-top"><strong>Confusion Matrices</strong></h6>
-            <p>The confusion matrix for both models are shown below. One model was trained using all features directly, while the other used only PCA-reduced data:</p>
-            
-            <div class="w3-container" style="max-width:1400px; margin:0 auto;">
-                <div class="w3-row-padding w3-center">
-                    <div class="w3-col m6">
-                        <img src="../images/module3_images/confusion_matrix_logistic_regression_all.png" class="w3-image" style="width:100%; max-height:600px;">
-                        <p class="w3-small">Logistic Regression - All Features</p>
-                    </div>
-                    <div class="w3-col m6">
-                        <img src="../images/module3_images/confusion_matrix_logistic_regression_pca.png" class="w3-image" style="width:100%; max-height:600px;">
-                        <p class="w3-small">Logistic Regression - PCA-Reduced</p>
-                    </div>
-                </div>
-            </div>
-            
-            <p>The following table presents the accuracy and errors of both models (PCA 1-D decomposition and the whole feature space) using logistic regression. Note That
-            each of the two models used the same testing and training split of the original cleaned data. Ultimatley, the whole model produces a slightly higher accuracy. This makes sense:
-            principal component analysis never captures the full variance in the original input data as its algorithm only maximizes the variance along one linear combination of the feature 
-            space. Thus, the whole model may pick up on sensitivies in the data not represented by the 1-D decomposition. However, in order to verify more confidently which model was more accurate,
-            we'd need to simulate the performance of each model over many testing and training splits. 
-            </p>
-            
-            
-            <table class="w3-table w3-bordered w3-small w3-centered">
-                <thead>
-                    <tr class="w3-light-grey">
-                        <th>Model</th>
-                        <th>Accuracy</th>
-                        <th>Error Rate</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Logistic Regression (Full Feature Space)</td>
-                        <td>0.70</td>
-                        <td>0.30</td>
-                    </tr>
-                    <tr>
-                        <td>Logistic Regression (PCA - 1 Component)</td>
-                        <td>0.68</td>
-                        <td>0.32</td>
-                    </tr>
-                </tbody>
-            </table>
-
-
-            
-            <!-- (e) Comparison to Naive Bayes -->
-            <h6 class="w3-margin-top"><strong>Comparison to Naive Bayes</strong></h6>
-            <p>To contextualize the performance of logistic regression, it was compared to a Multinomial Naive Bayes model using count data. Given that multinomial Bayes
-            can only process positive integer values, the data had to cleaned and feature engineered further. Firstly, all of the columns represnting differences between
-            team scores were removed. To account for some of the information lost from this feature subtraction, I created one more column called <code>FGA</code> that is the sum
-            of the field goals missed and field goals made columns. By adding in the total, maybe the algorithm could have captured how well a team was doing relative to their total volume of
-            shots. The cleaned dataset for this portion looks like this:
-            
-            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-width: 1000px;">
-                <table class="w3-table w3-bordered w3-small w3-centered">
-                    <thead>
-                        <tr class="w3-light-grey">
-                            <th>FIELD_GOAL_MADE</th>
-                            <th>FIELD_GOAL_MISSED</th>
-                            <th>FREE_THROW</th>
-                            <th>REBOUND</th>
-                            <th>TURNOVER</th>
-                            <th>FOUL</th>
-                            <th>VIOLATION</th>
-                            <th>SUBSTITUTION</th>
-                            <th>EJECTION</th>
-                            <th>FGA</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td><td>58</td></tr>
-                        <tr><td>22</td><td>23</td><td>15</td><td>33</td><td>9</td><td>7</td><td>1</td><td>13</td><td>0</td><td>45</td></tr>
-                        <tr><td>22</td><td>27</td><td>6</td><td>24</td><td>5</td><td>12</td><td>1</td><td>13</td><td>0</td><td>49</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <p> Finally, the confusion matrix for the multinomial bayes is shown below. The accuracy was 68%.
+            <p>This model produced an accuracy of 71%, as shown in the following classification report. 
+            This is better than any of the indivual trees shown in the decision tree tab. 
             </p>
             
             <div class="w3-center">
-                <img src="../images/module3_images/confusion_matrix_multinomialNB.png" class="w3-image" style="width:80%; max-width:800px;">
-                <p class="w3-small">Multinomial Naive Bayes</p>
+                <img src="../images/module4_images/classification_report.png" class="w3-image" style="width:60%; max-width:1000px;">
             </div>
-
-            <!-- (f) Conclusions -->
+            
+            <!-- (d) Conclusions-->
             <h6 class="w3-margin-top"><strong>Conclusions</strong></h6>
-            <p>Both models achieved reasonable accuracy, with logistic regression offering strong interpretability through the sigmoid curve and feature coefficients. 
-            Multinomial Naive Bayes performed competitively, especially given its simplicity, but remained below the two logistic regression models. 
-            Each model confirms that halftime statistics can contribute to an accuracy predictive model of a team winning.
-            I suggest that the multinomial naive bayes model worked slightly less well because the DIFF statistics were removed from the training. In removing these features,
-            all metrics relative to the given game were omitted from the model.
+            <p>
+            In this case, the forest achieved an accuracy of 70% on the test data, outperforming every standalone tree I tested during the Decision Tree tab! 
+            This suggests that the model successfully generalized 
+            to patterns that hold across games, rather than just memorizing the training examples. It’s a good reminder that while simple models can sometimes get close, 
+            aggregating multiple weaker models can lead to stronger, more stable performance.
             </p>
+
+            <p>
+            For a non-technical takeaway: imagine asking 100 basketball fans to guess the outcome of a game using stats from the first half. Some fans might guess wildly, 
+            but if you take a vote, the majority often gets it right. In this goofy analogy, each “fan” (tree) contributes a prediction, and the final decision reflects the consensus 
+            of the 100 fans. In this case, the group did pretty well -- 70 fans predicted the correct outcome.
+            </p>
+
 
             <!-- Download Section -->
             <strong>Downloads</strong>
             <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
                 <ul>
-                    <li>Cleaned dataset with labels used for logistic regression: <a href="../data/module3_data/cleaned_labeled_data.csv" download>cleaned_labeled_data.csv</a></li>
-                    <li>Multinomial NB dataset with FGA column added: <a href="../data/module3_data/multinomial_bayes_data.csv" download>multinomial_bayes_data.csv</a></li>
-                    <li>Notebook: <a href="../notebooks/logistic_regression.ipynb" download>logistic_regression.ipynb</a></li>
+                    <li>Cleaned dataset with labels used for SVM: <a href="../data/module3_data/cleaned_labeled_data.csv" download>cleaned_labeled_data.csv</a></li>
+                    <li>Notebook: <a href="../notebooks/module4_notebook.ipynb" download>module4_notebook.ipynb</a></li>
                 </ul>
             </div>
 

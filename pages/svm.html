@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVM - Nugget Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        body, html {
+          height: 100%;
+          font-family: "Georgia", sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s2"><a href="../index.html" class="w3-button w3-block w3-black">Introduction</a></div>
+        <div class="w3-col s2"><a href="arm.html" class="w3-button w3-block w3-black">ARM</a></div>
+        <div class="w3-col s2"><a href="pca.html" class="w3-button w3-block w3-black">PCA</a></div>
+        <div class="w3-col s2"><a href="clustering.html" class="w3-button w3-block w3-black">Clustering</a></div>
+        <div class="w3-col s2"><a href="regression.html" class="w3-button w3-block w3-black">Regression</a></div>
+        <div class="w3-col s2"><a href="naivebayes.html" class="w3-button w3-block w3-black">Naive Bayes</a></div>
+        <div class="w3-col s2"><a href="decisiontree.html" class="w3-button w3-block w3-black">Decision Tree</a></div>
+        <div class="w3-col s2"><a href="svm.html" class="w3-button w3-block w3-black">SVM</a></div>
+        <div class="w3-col s2"><a href="ensemble.html" class="w3-button w3-block w3-black">Ensemble</a></div>
+        <div class="w3-col s2"><a href="conclusion.html" class="w3-button w3-block w3-black">Conclusion</a></div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-sand w3-grayscale w3-large">
+    <div class="w3-container" id="regression" style="margin-top:75px;">
+
+        <div class="w3-content" style="max-width:1400px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Support Vector Classification</span></h5>
+
+            <!-- SVM overview -->
+            <h6><strong>Overview</strong></h6>
+
+            <p>
+            Support Vector Machines (SVMs) are a supervised machine learning technique used to find the best linear separator between two classes of data. When the data cannot be separated linearly in its original feature space, SVMs use what’s called a kernel function. This function allows the model to implicitly transform the data into a higher-dimensional space where a linear separator (called a <i>hyperplane</i>) can often divide the classes cleanly. In this project, I used both radial basis function (RBF) and polynomial kernels to enable these transformations.
+            </p>
+
+            <p>
+            To help illustrate this concept more intuitively, I’ve included a simplified visual example below:
+            </p>
+
+            <div class="w3-center">
+                <img src="../images/module4_images/transformation_illustration.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div>
+
+            <p>
+            In the top plot, the data exists in a one-dimensional space, represented by a single feature <i>X</i>. The orange points (Class 2) are surrounded by the blue points (Class 1), making it impossible to draw a single straight line that separates the two classes — the problem is not linearly separable in this space.
+            </p>
+
+            <p>
+            However, in the bottom plot, the data has been transformed by raising <i>X</i> to the sixth power. This transformation expands the original data into a two-dimensional space, where the classes now appear clearly separable. A straight line — the decision boundary — can now divide the classes. In higher dimensions, this line generalizes to a hyperplane. Crucially, SVMs don’t perform this transformation explicitly; instead, the kernel trick allows the model to compute the necessary relationships as if the data were transformed, without ever constructing the higher-dimensional representation directly.
+            </p>
+            
+            
+            <p>
+            Behind the scenes, SVM relies heavily on the <strong><i>dot product</i></strong>, a fundamental mathematical operation that measures similarity between vectors. The dot product is defined as the sum of the products of corresponding elements in two vectors:
+            </p>
+
+            <p style="text-align: center;">
+                $$
+                a \cdot b = \sum_{i=1}^n a_i b_i
+                $$
+            </p>
+
+            <p>
+            This operation appears throughout the SVM formulation and plays a key role in determining how points relate to one another in the transformed space. The example below walks through a basic, concrete case of how SVM uses dot products and optimization to find the best separator between two classes.
+            </p>
+
+            <p>To begin, the central objective in SVM is to maximize the following dual Lagrangian expression:</p>
+            <p style="text-align: center;">
+                $$
+                \mathscr{L}_D = \sum_{i=1}^n \lambda_i - \frac{1}{2} \sum_{i=1}^n \sum_{j=1}^n \lambda_i \lambda_j x_i x_j y_i y_j
+                $$
+            </p>
+            <p>
+            This expression is maximized with respect to the Lagrange multipliers &lambda;<sub>i</sub>, based on the training data provided. 
+            Once we solve for these optimal &lambda;<sub>i</sub> values, we can recover the parameters of our decision boundary.
+            </p>
+
+            <p>Supporting equations used in this derivation include:</p>
+            <p style="text-align: center;">
+                $$
+                w = \sum_{i=1}^n \lambda_i y_i x_i
+                $$
+            </p>
+            <p>This gives the expression for the weight vector <i>w</i>, which defines the orientation of the decision boundary.</p>
+
+            <p style="text-align: center;">
+                $$
+                y_i(w^T x_i + b) - 1 = 0
+                $$
+            </p>
+            <p>
+            This margin condition is used to solve for the bias term <i>b</i>, once <i>w</i> is known. It ensures that support vectors lie exactly on the margin.
+            </p>
+
+            <p style="text-align: center;">
+                $$
+                \sum_{i=1}^n y_i \lambda_i = 0
+                $$
+            </p>
+            <p>This constraint enforces balance in the classification decision and ensures the solution satisfies the Karush-Kuhn-Tucker (KKT) conditions.</p>
+
+            <p>For this demonstration, the support vectors were:</p>
+            <ul>
+                <li>x<sub>1</sub>: (0,1)</li>
+                <li>x<sub>2</sub>: (0,2)</li>
+                <li>x<sub>3</sub>: (2,1)</li>
+            </ul>
+            <p>Their corresponding class labels were 1, 1, and -1, respectively.</p>
+
+            <p>Since the dual formulation involves dot products between support vectors, we first compute:</p>
+            <ul>
+                <li>x<sub>1</sub><sup>T</sup>x<sub>1</sub> = 1</li>
+                <li>x<sub>1</sub><sup>T</sup>x<sub>2</sub> = 2</li>
+                <li>x<sub>1</sub><sup>T</sup>x<sub>3</sub> = 1</li>
+                <li>x<sub>2</sub><sup>T</sup>x<sub>3</sub> = 2</li>
+                <li>x<sub>2</sub><sup>T</sup>x<sub>2</sub> = 4</li>
+                <li>x<sub>3</sub><sup>T</sup>x<sub>3</sub> = 5</li>
+            </ul>
+
+            <p>
+            Plugging these values into the expanded form of the dual Lagrangian gives:
+            </p>
+            <p style="text-align: center;">
+                $$
+                \mathscr{L}_D = \lambda_1 + \lambda_2 + \lambda_3 + \frac{1}{2}\left[\lambda_1^2 + 4\lambda_1 \lambda_2 - 2\lambda_1 \lambda_3 + 4\lambda_2^2 - 4\lambda_2 \lambda_3 + 5\lambda_3^2\right]
+                $$
+            </p>
+
+            <p>
+            To simplify, we use the constraint $\lambda_1 + \lambda_2 = \lambda_3$ to eliminate $\lambda_3$ from the equation, yielding:
+            </p>
+            <p style="text-align: center;">
+                $$
+                \mathscr{L}_D = 2\lambda_1 + 2\lambda_2 - \frac{1}{2}\left[4\lambda_1^2 + 8\lambda_1 \lambda_2 + 5\lambda_2^2\right]
+                $$
+            </p>
+
+            <p>
+            We then take the partial derivatives of this expression with respect to $\lambda_1$ and $\lambda_2$, set them to zero, and solve the resulting system:
+            </p>
+            <p style="text-align: center;">
+                $$
+                \lambda_1 = \frac{1}{2} - \lambda_2
+                $$
+            </p>
+            <p style="text-align: center;">
+                $$
+                \lambda_2 = \frac{2 - 4\lambda_1}{5}
+                $$
+            </p>
+
+            <p>Solving this system gives:</p>
+            <ul>
+                <li>&lambda;<sub>1</sub> = ½</li>
+                <li>&lambda;<sub>2</sub> = 0</li>
+                <li>&lambda;<sub>3</sub> = &lambda;<sub>1</sub> + &lambda;<sub>2</sub> = ½</li>
+            </ul>
+
+            <p>
+            With the λ values known, we can now compute <i>w</i> from equation 2:
+            </p>
+            <p style="text-align: center;">
+                \begin{align}
+                w &= \sum_{i=1}^n \lambda_i y_i x_i \\
+                &= \lambda_1 x_1 y_1 + \lambda_2 x_2 y_2 + \lambda_3 x_3 y_3 \\
+                &= \frac{1}{2}(0,1) + 0(0,2) + \frac{1}{2}(2,1)(-1) \\
+                &= (-1, 0)
+                \end{align}
+            </p>
+
+            <p>
+            Finally, we use x<sub>1</sub> and equation 3 to solve for <i>b</i>:
+            </p>
+            <p style="text-align: center;">
+                \begin{align}
+                -1((-1,0)^T(0,1) + b ) -1 = 0
+                \end{align}
+            </p>
+
+            <p>Solving this yields:</p>
+            <p style="text-align: center;">
+                $$
+                b = 1
+                $$
+            </p>
+
+            <p>
+            With <i>w</i> = (–1, 0) and <i>b</i> = 1, the final decision boundary takes the form:
+            </p>
+            <p style="text-align: center;">
+                $$
+                w^T x + b = 0
+                $$
+            </p>
+            <p>This evaluates to a vertical line at <i>x = 1</i>, which cleanly separates the two classes in the transformed space.
+            I've included an image of my support vectors with their separator below.</p>
+            
+            <div class="w3-center">
+                <img src="../images/module4_images/separator.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div>
+
+
+            <!-- Dataset -->
+            <h6 class="w3-margin-top"><strong>Dataset</strong></h6>
+            <p>The dataset for this tab was uniquely constructed using two endpoints from the NBA API. The first endpoint, <code>LeagueGameLog</code>, allowed me to get the 
+            win/loss labels for every game in the 2023-2024 season. A snippet from this endpoint is shown below.
+            </p>
+            <table class="w3-table w3-bordered w3-small">
+                <thead>
+                    <tr>
+                        <th>GAME_ID</th>
+                        <th>TEAM_NAME</th>
+                        <th>WL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0022300062</td>
+                        <td>Warriors</td>
+                        <td>L</td>
+                    </tr>
+                    <tr>
+                        <td>0022300062</td>
+                        <td>Suns</td>
+                        <td>W</td>
+                    </tr>
+                    <tr>
+                        <td>0022300061</td>
+                        <td>Nuggets</td>
+                        <td>W</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>The second endpoint used to construct the data for this tab comes from the <code>PlayByPlay</code> endpoint - the same one used in the ARM tab. A snippet of the data
+            from the <code>PlayByPlay</code> endpoint is shown below.
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small">
+                    <thead>
+                        <tr>
+                            <th>GAME_ID</th><th>EVENTNUM</th><th>EVENTMSGTYPE</th><th>EVENTMSGACTIONTYPE</th><th>PERIOD</th>
+                            <th>WCTIMESTRING</th><th>PCTIMESTRING</th><th>HOMEDESCRIPTION</th><th>NEUTRALDESCRIPTION</th>
+                            <th>VISITORDESCRIPTION</th><th>SCORE</th><th>SCOREMARGIN</th><th>PERSON1TYPE</th><th>PLAYER1_ID</th>
+                            <th>PLAYER1_NAME</th><th>PLAYER1_TEAM_ID</th><th>PLAYER1_TEAM_CITY</th><th>PLAYER1_TEAM_NICKNAME</th>
+                            <th>PLAYER1_TEAM_ABBREVIATION</th><th>PERSON2TYPE</th><th>PLAYER2_ID</th><th>PLAYER2_NAME</th>
+                            <th>PLAYER2_TEAM_ID</th><th>PLAYER2_TEAM_CITY</th><th>PLAYER2_TEAM_NICKNAME</th>
+                            <th>PLAYER2_TEAM_ABBREVIATION</th><th>PERSON3TYPE</th><th>PLAYER3_ID</th><th>PLAYER3_NAME</th>
+                            <th>PLAYER3_TEAM_ID</th><th>PLAYER3_TEAM_CITY</th><th>PLAYER3_TEAM_NICKNAME</th>
+                            <th>PLAYER3_TEAM_ABBREVIATION</th><th>VIDEO_AVAILABLE_FLAG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0042300237</td><td>2</td><td>12</td><td>0</td><td>1</td><td>8:07 PM</td><td>12:00</td>
+                            <td>None</td><td>Start of 1st Period (8:07 PM EST)</td><td>None</td><td>None</td><td>None</td>
+                            <td>None</td><td>0</td><td>0</td><td>None</td><td></td><td></td><td></td>
+                            <td>0</td><td>0</td><td></td><td></td><td></td><td></td><td></td>
+                            <td>0</td><td>0</td><td></td><td></td><td></td><td></td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td>0042300237</td><td>4</td><td>10</td><td>0</td><td>1</td><td>8:07 PM</td><td>12:00</td>
+                            <td>Jump Ball Jokic vs. Gobert: Tip to Edwards</td><td>None</td><td>None</td><td>None</td><td>None</td>
+                            <td>4</td><td>203999</td><td>Nikola Jokić</td><td>1610612743</td><td>Denver</td><td>Nuggets</td><td>DEN</td>
+                            <td>5</td><td>203497</td><td>Rudy Gobert</td><td>1610612740</td><td>Minnesota</td><td>Timberwolves</td><td>MIN</td>
+                            <td>5</td><td>1630162</td><td>Anthony Edwards</td><td>1610612740</td><td>Minnesota</td><td>Timberwolves</td><td>MIN</td><td>1</td>
+                        </tr>
+                        <tr>
+                            <td>0042300237</td><td>7</td><td>6</td><td>4</td><td>1</td><td>8:07 PM</td><td>11:47</td>
+                            <td>None</td><td>None</td><td>Gobert OFF.Foul (P1) (S.Foster)</td><td>None</td><td>None</td>
+                            <td>5</td><td>203497</td><td>Rudy Gobert</td><td>1610612740</td><td>Minnesota</td><td>Timberwolves</td><td>MIN</td>
+                            <td>4</td><td>1627750</td><td>Jamal Murray</td><td>1610612743</td><td>Denver</td><td>Nuggets</td><td>DEN</td>
+                            <td>1</td><td>0</td><td></td><td></td><td></td><td></td><td>1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>To get the final cleaned dataset, I iterated through all of the game ID's present in the first dataset and summed up all of the instances of certain stats in the <code>PlayByPlay</code>
+            for each team participating in each game. In doing this, I was able to get the half-time stats and the eventual outcome (win or lose) of each team for every game in the 2023-2024 season. 
+            At this point, I also included some feature engineering. Instead of simply tracking the absolute value of <code>FIELD_GOALS_MADE</code>, for a given team, I also calculated the difference
+            between in each stat for both teams. If, for example, team A had 15 field goals made and the other team had 12 field goals made, then the feature engineered <code>FIELD_GOALS_MADE_DIFF</code>
+            column would report 3 and -3 for team A and B respectively. The final cleaned dataframe is shown below. 
+            </p>
+            
+            <div style="overflow-x: auto; border: 1px solid #ccc; padding: 8px; max-height: 300px;">
+                <table class="w3-table w3-bordered w3-small" style="overflow-x:auto;">
+                    <thead>
+                        <tr>
+                            <th>FIELD_GOAL_MADE</th>
+                            <th>FIELD_GOAL_MISSED</th>
+                            <th>FREE_THROW</th>
+                            <th>REBOUND</th>
+                            <th>TURNOVER</th>
+                            <th>FOUL</th>
+                            <th>VIOLATION</th>
+                            <th>SUBSTITUTION</th>
+                            <th>EJECTION</th>
+                            <th>FIELD_GOAL_MADE_DIFF</th>
+                            <th>FIELD_GOAL_MISSED_DIFF</th>
+                            <th>FREE_THROW_DIFF</th>
+                            <th>REBOUND_DIFF</th>
+                            <th>TURNOVER_DIFF</th>
+                            <th>FOUL_DIFF</th>
+                            <th>TEAM_NAME</th>
+                            <th>GAME_ID</th>
+                            <th>WL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>18</td><td>40</td><td>6</td><td>24</td><td>4</td><td>15</td><td>0</td><td>14</td><td>0</td>
+                            <td>-4</td><td>17</td><td>-9</td><td>-9</td><td>-5</td><td>8</td><td>Warriors</td><td>22300062</td><td>L</td>
+                        </tr>
+                        <tr>
+                            <td>22</td><td>23</td><td>15</td><td>33</td><td>9</td><td>7</td><td>1</td><td>13</td><td>0</td>
+                            <td>4</td><td>-17</td><td>9</td><td>9</td><td>5</td><td>-8</td><td>Suns</td><td>22300062</td><td>W</td>
+                        </tr>
+                        <tr>
+                            <td>22</td><td>27</td><td>6</td><td>24</td><td>5</td><td>12</td><td>1</td><td>13</td><td>0</td>
+                            <td>-2</td><td>3</td><td>-5</td><td>0</td><td>0</td><td>9</td><td>Lakers</td><td>22300061</td><td>L</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>Note that the table above shows the complete cleaned and labeled dataset that forms the basis of all the other models in this tab and the subsequent two. 
+            The labels were removed for all of the modeling. And the models were trained with 80% of the data and tested on the remainder. 
+            </p>
+            <h6><strong>Train Test Split</strong></h6>
+            <p>Splitting the data into a training and testing portion is paramount. The model mustn't be tested 
+            with data that it's already seen. This helps ensure the model isn't simply recognizing the same exact patterns it was trained on. Rather, it can now generalize to data beyond the training set.
+            An analogy is that student's shouldn't be tested over the problems they solved in their homework but rather, be tested upon different types of problems within the same subject domain.
+            </p>
+            
+            <h6><strong>Data, Transformed for SVMs</strong></h6>
+            <p> 
+            While the above section outlines the data prep and cleaning I had to perform to get the general data, I applied principal component analysis with two components to get
+            the data into two columns. This allows for nice visualizations in the next section. I've shown the testing and training portions of the PCA transformed data below:
+            </p>
+            
+            
+            <div class="w3-center">
+                <p>Testing Data</p>
+                <img src="../images/module4_images/test_data_pca.png" class="w3-image" style="width:20%;">
+            </div>
+            
+            <div class="w3-center">
+                <p>Training Data</p>
+                <img src="../images/module4_images/train_data_pca.png" class="w3-image" style="width:20%;">
+            </div>
+
+           
+
+            <!-- PCA & Visualization -->
+            <h6 class="w3-margin-top"><strong>SVM Implemetation</strong></h6>
+            <p>PCA was used to reduce the dimensionality of the data to two features as explained at the end of the previous section. This transformation allows a clear visualization of the 
+            countours that determine the decision boundary. The following plot shows a scatter plot of the decomposed data.
+            </p>
+
+            <div class="w3-center">
+                <img src="../images/module4_images/scatterplot.png" class="w3-image" style="width:100%; max-width:1000px;">
+            </div>
+            
+            <p>It's evident by eye that the two classes of data largely overlap. However, looking closely seems to show that the two populations are centered at a different location on their 
+            x-axes. Thus, I had hope that SVMs could separate the two classes provided an appropriate cost value. For the following models, I've chosen to implement support vector classifiers
+            with one RBF kernel, and polynomials of degree four and six. Lastly, I'll include 2 plots per model:
+            <ul>
+                <li>Confusion Matrix</li>
+                <li>Original Data with Decision Contours</li>
+            </ul>
+            And then at the end of each mini-section I'll  show the accuracy of each kernel as a function of cost and a comparison between all models.
+            </p>
+            
+
+            
+            <!-- RBF Kernel Results -->
+            <h6><strong>RBF Kernel – SVM Classification at Different Cost Levels</strong></h6>
+            <p>
+            The following sets of plots show the performance of an SVM using an RBF (radial basis function) kernel at three different cost values. Each set includes a confusion matrix and a decision boundary plot in PCA-reduced space.
+            </p>
+
+            <div class="w3-row-padding w3-center">
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_rbf_0_000.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">RBF Kernel – Confusion Matrix (C ≈ 0.01)</p>
+                    <img src="../images/module4_images/decision_boundary_rbf_0_000.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – RBF Kernel (C ≈ 0.01)</p>
+                </div>
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_rbf_0_025.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">RBF Kernel – Confusion Matrix (C ≈ 25)</p>
+                    <img src="../images/module4_images/decision_boundary_rbf_0_025.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – RBF Kernel (C ≈ 25)</p>
+                </div>
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_rbf_0_050.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">RBF Kernel – Confusion Matrix (C ≈ 50)</p>
+                    <img src="../images/module4_images/decision_boundary_rbf_0_050.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – RBF Kernel (C ≈ 50)</p>
+                </div>
+            </div>
+
+            <p>
+            The plot below shows how accuracy changes with cost for the RBF kernel. Accuracy generally improves as cost decreases; moreover, a high cost may lead to 
+            overfitting depending on the model and data.
+            </p>
+            <div class="w3-center">
+                <img src="../images/module4_images/acc_vs_cost_rbf_0.png" class="w3-image" style="width:100%; max-width:800px;">
+            </div>
+
+            <!-- Polynomial Kernel (Degree 3) Results -->
+            <h6><strong>Polynomial Kernel (Degree = 3) – SVM Classification at Different Cost Levels</strong></h6>
+            <p>
+            This section shows how a polynomial kernel with degree 3 performs at three cost levels. As with the RBF kernel, each cost level includes both a confusion matrix and a decision boundary plot.
+            </p>
+
+            <div class="w3-row-padding w3-center">
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_poly_3_000.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Poly (d=3) – Confusion Matrix (C ≈ 0.01)</p>
+                    <img src="../images/module4_images/decision_boundary_poly_3_000.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – Poly (d=3) (C ≈ 0.01)</p>
+                </div>
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_poly_3_025.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Poly (d=3) – Confusion Matrix (C ≈ 25)</p>
+                    <img src="../images/module4_images/decision_boundary_poly_3_025.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – Poly (d=3) (C ≈ 25)</p>
+                </div>
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_poly_3_050.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Poly (d=3) – Confusion Matrix (C ≈ 50)</p>
+                    <img src="../images/module4_images/decision_boundary_poly_3_050.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – Poly (d=3) (C ≈ 50)</p>
+                </div>
+            </div>
+
+            <p>
+            This line chart shows how accuracy changes across cost values for the degree-3 polynomial kernel.
+            </p>
+            <div class="w3-center">
+                <img src="../images/module4_images/acc_vs_cost_poly_3.png" class="w3-image" style="width:100%; max-width:800px;">
+            </div>
+
+            <!-- Polynomial Kernel (Degree 5) Results -->
+            <h6><strong>Polynomial Kernel (Degree = 5) – SVM Classification at Different Cost Levels</strong></h6>
+            <p>
+            The final kernel tested was a polynomial kernel of degree 5. As before, we evaluate the model at three different cost values and observe both the classification results and the decision boundaries in PCA space.
+            </p>
+
+            <div class="w3-row-padding w3-center">
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_poly_5_000.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Poly (d=5) – Confusion Matrix (C ≈ 0.01)</p>
+                    <img src="../images/module4_images/decision_boundary_poly_5_000.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – Poly (d=5) (C ≈ 0.01)</p>
+                </div>
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_poly_5_025.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Poly (d=5) – Confusion Matrix (C ≈ 25)</p>
+                    <img src="../images/module4_images/decision_boundary_poly_5_025.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – Poly (d=5) (C ≈ 25)</p>
+                </div>
+                <div class="w3-col m4">
+                    <img src="../images/module4_images/confusion_matrix_poly_5_050.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Poly (d=5) – Confusion Matrix (C ≈ 50)</p>
+                    <img src="../images/module4_images/decision_boundary_poly_5_050.png" class="w3-image" style="width:100%;">
+                    <p class="w3-small">Decision Boundary – Poly (d=5) (C ≈ 50)</p>
+                </div>
+            </div>
+
+            <p>
+            Accuracy vs. cost for the degree-5 polynomial kernel is shown below. As with other kernels, cost plays a significant role in balancing margin flexibility and classification error.
+            </p>
+            <div class="w3-center">
+                <img src="../images/module4_images/acc_vs_cost_poly_5.png" class="w3-image" style="width:100%; max-width:800px;">
+            </div>
+
+            <!-- Final Accuracy Comparison -->
+            <h6><strong>Model Accuracy Comparison Across All Kernels</strong></h6>
+            <p>
+            To summarize model performance across all kernel types and cost values, the bar chart below compares their classification accuracy. 
+            This provides a concise view of which kernel and hyperparameter combination performed best in this task. We can see that, while the accuracy is relatively consistent between all of the models,
+            (between 68-70%), the SVM with the RBF kernel and cost function of 0.01 had the best accuracy.
+            </p>
+            <div class="w3-center">
+                <img src="../images/module4_images/model_accuracy_summary.png" class="w3-image" style="width:100%; max-width:800px;">
+            </div>
+
+            
+            
+            <!-- (d) Conclusions-->
+            <h6 class="w3-margin-top"><strong>Conclusions</strong></h6>
+            <p>
+            Support Vector Machines proved to be a powerful classification tool in this analysis. Despite the heavy overlap between the two classes in the original PCA-reduced space, the 
+            SVM models were still able to learn meaningful decision boundaries — especially when the kernel and cost parameters were carefully chosen. Among the three kernels tested 
+            (RBF, polynomial d=3, and polynomial d=5), the RBF kernel consistently performed best, particularly at low cost values. This suggests that in highly overlapping data, allowing for 
+            more flexible margins (via lower C) and using non-linear kernels can significantly improve generalization. 
+            </p>
+
+            <p>
+            While overall classification accuracy hovered between 68% and 70% across all models, this consistency reinforces the difficulty of the task and the importance of tuning hyperparameters 
+            to adapt to the structure of the data. The kernel trick — particularly via dot products in high-dimensional spaces — enabled models to separate otherwise inseparable data in a computationally 
+            efficient way. This project highlights how even small margins of improvement can result from thoughtful modeling decisions, and how SVMs continue to be a relevant and intuitive method for 
+            binary classification problems like win/loss prediction.
+            </p>
+
+
+            <!-- Download Section -->
+            <strong>Downloads</strong>
+            <div class="w3-panel w3-leftbar w3-light-grey w3-margin-top">
+                <ul>
+                    <li>Cleaned dataset with labels used for SVM: <a href="../data/module3_data/cleaned_labeled_data.csv" download>cleaned_labeled_data.csv</a></li>
+                    <li>Notebook: <a href="../notebooks/module4_notebook.ipynb" download>module4_notebook.ipynb</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+    <p>This analysis is done for the University of Colorado, Boulder, as part of the curriculum for CS 5612</p>
+    <p>Template provided <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>
